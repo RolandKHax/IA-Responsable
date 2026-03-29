@@ -49,7 +49,7 @@ class User(UserMixin, db.Model):
     password_changed_at = db.Column(db.DateTime)
     
     # Relations
-    requests = db.relationship('Request', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    requests = db.relationship('Request', foreign_keys='Request.user_id', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     audit_logs = db.relationship('AuditLog', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     
     def __repr__(self):

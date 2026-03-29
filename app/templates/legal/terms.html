@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Conditions d'utilisation{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Conditions d'utilisation</h1>
+
+    <div class="prose prose-blue max-w-none space-y-6 text-gray-700">
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">1. Acceptation des conditions</h2>
+            <p>En utilisant ce système, vous acceptez les présentes conditions d'utilisation dans leur intégralité. Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser ce service.</p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">2. Description du service</h2>
+            <p>Le système IA Responsable de l'ENSA Béni Mellal est une plateforme éducative permettant d'interagir avec un moteur d'intelligence artificielle dans un cadre éthique et conforme au RGPD.</p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">3. Utilisation acceptable</h2>
+            <p>Vous vous engagez à utiliser ce service uniquement à des fins légitimes et éducatives. Il est interdit de :</p>
+            <ul class="list-disc pl-6 mt-2 space-y-1">
+                <li>Soumettre des données personnelles sensibles</li>
+                <li>Tenter de contourner les mesures de sécurité</li>
+                <li>Utiliser le service à des fins illégales ou malveillantes</li>
+                <li>Partager vos identifiants de connexion</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">4. Limitations de responsabilité</h2>
+            <p>Les réponses générées par l'IA sont fournies à titre indicatif uniquement. L'ENSA Béni Mellal ne garantit pas l'exactitude, l'exhaustivité ou la pertinence des réponses générées. Vous êtes responsable de la vérification de toute information avant de l'utiliser.</p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">5. Protection des données</h2>
+            <p>Vos données sont traitées conformément à notre <a href="{{ url_for('main.privacy_policy') }}" class="text-blue-600 hover:underline">politique de confidentialité</a> et au Règlement Général sur la Protection des Données (RGPD).</p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">6. Modifications</h2>
+            <p>Nous nous réservons le droit de modifier ces conditions à tout moment. Les modifications entrent en vigueur dès leur publication sur cette page.</p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">7. Contact</h2>
+            <p>Pour toute question concernant ces conditions, contactez l'administration de l'ENSA Béni Mellal.</p>
+        </section>
+    </div>
+
+    <div class="mt-10">
+        <a href="{{ url_for('main.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            Retour à l'accueil
+        </a>
+    </div>
+</div>
+{% endblock %}

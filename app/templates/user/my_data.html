@@ -180,6 +180,7 @@
             </div>
 
             <form method="POST" action="{{ url_for('main.delete_account') }}" onsubmit="return confirm('Êtes-vous absolument sûr ? Cette action est IRRÉVERSIBLE.')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="mb-4">
                     <label for="confirmation" class="block text-sm font-medium text-gray-700 mb-2">
                         Tapez <strong class="text-red-600">supprimer</strong> pour confirmer :
@@ -199,13 +200,24 @@
 
 <script>
 function exportToJSON() {
-    const data = {{ requests | tojson }};
+    const data = [
+        {% for req in requests %}
+        {
+            "id": {{ req.id }},
+            "type": "{{ req.request_type }}",
+            "title": {{ req.title | tojson if req.title else 'null' }},
+            "date": "{{ req.created_at.strftime('%Y-%m-%dT%H:%M:%S') }}",
+            "validated": {{ 'true' if req.validated_by_human else 'false' }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'mes-donnees-{{ user.username }}-{{ user.created_at.strftime("%Y%m%d") }}.json';
     a.click();
+    URL.revokeObjectURL(url);
 }
 </script>
 {% endblock %}

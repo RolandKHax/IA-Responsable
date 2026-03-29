@@ -9,14 +9,14 @@ from .security import (
     detect_sensitive_data,
     anonymize_text,
     admin_required,
-    role_required
+    role_required,
+    validate_password_strength
 )
 
 from .validators import (
     is_valid_email,
     is_valid_username,
     validate_ai_request,
-    validate_password_strength
 )
 
 from .ai_engine import AIEngine, StressAnalyzer

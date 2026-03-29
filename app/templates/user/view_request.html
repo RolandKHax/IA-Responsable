@@ -93,6 +93,7 @@
             <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Votre avis nous intéresse</h3>
                 <form method="POST" action="{{ url_for('main.submit_feedback', request_id=req.id) }}" class="space-y-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Cette réponse vous a-t-elle été utile ?</label>
                         <div class="flex space-x-4">

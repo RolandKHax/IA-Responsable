@@ -1,453 +1,201 @@
-# Système IA Responsable - ENSA Béni Mellal
+# Système IA Responsable — ENSA Béni Mellal
 
-Système d'intelligence artificielle conforme RGPD et éthique IA pour le campus intelligent.
+> Projet pédagogique — Module Éthique et Droit du Numérique
+> Filière Intelligence Artificielle et Cybersécurité
+> Encadrant : Pr. TOUIL | Université Sultan Moulay Slimane
 
-## Table des Matières
-
-- [Caractéristiques](#caractéristiques)
-- [Architecture](#architecture)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Utilisation](#utilisation)
-- [API REST](#api-rest)
-- [Sécurité](#sécurité)
-- [Conformité RGPD](#conformité-rgpd)
-- [Licence](#licence)
-
-## Caractéristiques
-
-### Fonctionnalités IA
-- ✅ **Questions & Réponses** - Assistant pédagogique contextuel
-- ✅ **Résumés automatiques** - Génération de résumés de cours et documents
-- ✅ **Analyse de contenu** - Métriques linguistiques et recommandations
-- ✅ **Génération de contenu** - Aide à la rédaction (avec validation humaine)
-
-### Sécurité & Conformité
-- **Chiffrement AES-256** - Protection des données sensibles
-- **Authentification sécurisée** - Hash SHA-256 avec salt
-- **Audit complet** - Traçabilité de toutes les actions
-- **Conformité RGPD** - Droits d'accès et d'effacement
-- **Validation humaine** - Supervision des réponses IA
-- **Détection de données sensibles** - Protection automatique
-
-### Performances
-- **Cache intelligent** - Réduction du temps de réponse
-- **Monitoring** - Tableaux de bord et statistiques
-- **Rate limiting** - Protection contre les abus
-- **Base de données SQLite** - Légère et performante
-
-## Architecture
-
-```
-ia_system/
-├── app/
-│   ├── __init__.py              # Initialisation de l'application
-│   ├── models.py                # Modèles de base de données
-│   ├── routes/
-│   │   ├── __init__.py
-│   │   ├── auth.py              # Routes d'authentification
-│   │   ├── main.py              # Routes principales
-│   │   ├── admin.py             # Routes d'administration
-│   │   └── api.py               # API REST
-│   ├── utils/
-│   │   ├── __init__.py
-│   │   ├── security.py          # Sécurité et chiffrement
-│   │   ├── validators.py        # Validation des données
-│   │   └── ai_engine.py         # Moteur IA
-│   ├── static/
-│   │   ├── css/
-│   │   │   └── style.css        # CSS personnalisé
-│   │   └── js/
-│   │       └── main.js          # JavaScript
-│   └── templates/
-│       ├── base.html            # Template de base
-│       ├── index.html           # Page d'accueil
-│       ├── auth/                # Templates authentification
-│       ├── user/                # Templates utilisateur
-│       ├── admin/               # Templates admin
-│       └── legal/               # Templates légaux
-├── config.py                    # Configuration
-├── requirements.txt             # Dépendances
-├── run.py                       # Point d'entrée
-└── README.md                    # Documentation
-```
-
-## Installation
-
-### Prérequis
-
-- Python 3.8+
-- pip
-- virtualenv (recommandé)
-
-### Installation rapide
-
-```bash
-# 1. Cloner le projet
-git clone https://github.com/ensa-bm/ia-responsable.git
-cd ia-responsable
-
-# 2. Créer un environnement virtuel
-python -m venv venv
-
-# Activer l'environnement (Windows)
-venv\Scripts\activate
-
-# Activer l'environnement (Linux/Mac)
-source venv/bin/activate
-
-# 3. Installer les dépendances
-pip install -r requirements.txt
-
-# 4. Initialiser la base de données
-python run.py
-
-# 5. Lancer l'application
-python run.py
-```
-
-L'application sera accessible sur : http://localhost:5000
-
-### Identifiants par défaut
-
-**À CHANGER EN PRODUCTION !**
-
-- **Username**: `admin`
-- **Password**: `admin123`
-
-## Configuration
-
-### Variables d'environnement
-
-Créez un fichier `.env` à la racine du projet :
-
-```env
-# Sécurité
-SECRET_KEY=votre-cle-secrete-tres-longue-et-aleatoire
-
-# Base de données (optionnel - SQLite par défaut)
-DATABASE_URL=sqlite:///ia_system.db
-# DATABASE_URL=postgresql://user:pass@localhost/dbname
-# DATABASE_URL=mysql://user:pass@localhost/dbname
-
-# Email (optionnel)
-MAIL_SERVER=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=votre-email@gmail.com
-MAIL_PASSWORD=votre-mot-de-passe-application
-
-# Configuration IA
-AI_MAX_TOKENS=1000
-AI_TEMPERATURE=0.7
-ENABLE_HUMAN_VALIDATION=True
-```
-
-### Configuration de production
-
-Pour déployer en production :
-
-```bash
-# 1. Modifier config.py
-# Utiliser ProductionConfig
-
-# 2. Utiliser gunicorn
-pip install gunicorn
-
-# 3. Lancer avec gunicorn
-gunicorn -w 4 -b 0.0.0.0:5000 'run:create_app("production")'
-```
-
-## Utilisation
-
-### Interface utilisateur
-
-1. **Inscription** : Créez un compte avec consentement RGPD
-2. **Connexion** : Authentification sécurisée
-3. **Nouvelle demande** : Posez une question ou demandez un résumé
-4. **Mes données** : Consultez vos données (droit d'accès RGPD)
-5. **Suppression** : Exercez votre droit à l'effacement
-
-### Interface administrateur
-
-Accessible à `/admin/dashboard` pour les utilisateurs admin :
-
-- **Statistiques globales**
-- **Gestion des utilisateurs**
-- **Validation des réponses IA**
-- **Logs d'audit**
-- **Gestion du cache**
-- **Configuration système**
-
-## 🔌 API REST
-
-### Authentification
-
-Toutes les routes API nécessitent une authentification via session Flask-Login.
-
-### Endpoints principaux
-
-#### Vérifier l'état du système
-```bash
-GET /api/health
-```
-
-Réponse :
-```json
-{
-  "status": "ok",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "version": "1.0.0"
-}
-```
-
-#### Soumettre une question
-```bash
-POST /api/ask
-Content-Type: application/json
-
-{
-  "content": "Explique-moi le RGPD",
-  "request_type": "question"
-}
-```
-
-Réponse :
-```json
-{
-  "success": true,
-  "request_id": 123,
-  "response": "Le RGPD est...",
-  "from_cache": false,
-  "processing_time_ms": 850,
-  "requires_validation": true,
-  "created_at": "2024-01-15T10:35:00Z"
-}
-```
-
-#### Récupérer les demandes
-```bash
-GET /api/requests?page=1&per_page=20&type=question
-```
-
-#### Soumettre un feedback
-```bash
-POST /api/request/123/feedback
-Content-Type: application/json
-
-{
-  "rating": 5,
-  "feedback": "Très utile !",
-  "is_helpful": true
-}
-```
-
-#### Statistiques utilisateur
-```bash
-GET /api/stats
-```
-
-### Codes de statut HTTP
-
-- `200` - Succès
-- `400` - Requête invalide
-- `401` - Non authentifié
-- `403` - Accès refusé
-- `404` - Ressource non trouvée
-- `429` - Trop de requêtes (rate limiting)
-- `500` - Erreur serveur
-
-## Sécurité
-
-### Mesures implémentées
-
-1. **Authentification**
-   - Hachage SHA-256 avec salt
-   - Verrouillage après 5 tentatives échouées
-   - Expiration de session configurable
-
-2. **Protection des données**
-   - Chiffrement AES-256 en base de données
-   - TLS/HTTPS obligatoire en production
-   - Détection automatique de données sensibles
-
-3. **Protection contre les attaques**
-   - CSRF tokens (Flask-WTF)
-   - Rate limiting (Flask-Limiter)
-   - Sanitization des entrées
-   - SQL injection prevention (SQLAlchemy ORM)
-   - XSS protection
-
-4. **Audit et traçabilité**
-   - Logs immuables de toutes les actions
-   - IP et User-Agent enregistrés
-   - Historique des consentements RGPD
-
-## Conformité RGPD
-
-### Droits des utilisateurs
-
-1. **Droit d'accès** (Art. 15)
-   - Consultation de toutes les données personnelles
-   - Export possible en JSON
-
-2. **Droit d'effacement** (Art. 17)
-   - Suppression complète du compte
-   - Anonymisation des logs d'audit
-
-3. **Droit à la portabilité** (Art. 20)
-   - Export des données en format JSON
-
-4. **Droit d'opposition** (Art. 21)
-   - Retrait du consentement possible
-
-### Transparence
-
-- ✅ Politique de confidentialité accessible
-- ✅ Conditions d'utilisation claires
-- ✅ Consentement explicite à l'inscription
-- ✅ Information sur l'utilisation de l'IA
-- ✅ Validation humaine des réponses critiques
-
-### Base légale
-
-- Consentement de l'utilisateur (Art. 6.1.a RGPD)
-- Intérêt légitime pour l'amélioration du service (Art. 6.1.f RGPD)
-
-## Base de données
-
-### Modèles principaux
-
-- **User** : Utilisateurs et consentements
-- **Request** : Demandes et réponses IA
-- **AuditLog** : Journalisation complète
-- **CacheEntry** : Cache des réponses
-- **ConsentLog** : Historique des consentements
-- **SystemConfig** : Configuration dynamique
-
-### Migrations
-
-```bash
-# Initialiser les migrations
-flask db init
-
-# Créer une migration
-flask db migrate -m "Description"
-
-# Appliquer les migrations
-flask db upgrade
-```
-
-## Tests
-
-```bash
-# Installer les dépendances de test
-pip install pytest pytest-flask
-
-# Lancer les tests
-pytest
-
-# Avec couverture
-pytest --cov=app
-```
-
-## Déploiement
-
-### Docker (optionnel)
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "run:create_app('production')"]
-```
-
-### Heroku
-
-```bash
-# Créer un Procfile
-echo "web: gunicorn 'run:create_app(\"production\")'" > Procfile
-
-# Déployer
-git push heroku main
-```
-
-## 🛠️ Maintenance
-
-### Nettoyage du cache
-
-```python
-# Dans la console Python
-from app import create_app, db
-from app.models import CacheEntry
-from datetime import datetime
-
-app = create_app()
-with app.app_context():
-    # Supprimer les entrées expirées
-    CacheEntry.query.filter(
-        CacheEntry.expires_at < datetime.utcnow()
-    ).delete()
-    db.session.commit()
-```
-
-### Backup de la base de données
-
-```bash
-# SQLite
-cp ia_system.db ia_system_backup_$(date +%Y%m%d).db
-
-# PostgreSQL
-pg_dump dbname > backup_$(date +%Y%m%d).sql
-```
-
-## Changelog
-
-### Version 1.0.0 (2024-01-15)
-- Première version stable
-- Conformité RGPD complète
-- Sécurité renforcée
-- Interface d'administration
-- API REST complète
-
-## Contribution
-
-Les contributions sont les bienvenues ! Veuillez suivre ces étapes :
-
-1. Fork le projet
-2. Créez une branche (`git checkout -b feature/AmazingFeature`)
-3. Committez vos changements (`git commit -m 'Add AmazingFeature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une Pull Request
-
-## Licence
-
-Ce projet est développé dans le cadre du module "Ethique et Droit Numérique" 
-à l'ENSA Béni Mellal.
-
-## Auteurs
-
-- **ENSA Béni Mellal** - Module Éthique et Droit du Numérique
-- **Encadrant** : Pr. TOUIL
-
-## Support
-
-Pour toute question ou problème :
-
-- Email : support@ensa.ma
-- Issues : [GitHub Issues](https://github.com/ensa-bm/ia-responsable/issues)
-- Documentation : [Wiki](https://github.com/ensa-bm/ia-responsable/wiki)
+Application web Flask implémentant un assistant IA conforme au RGPD, avec gouvernance éthique, supervision humaine et traçabilité complète.
 
 ---
 
-**Note importante** : Ce système est conçu à des fins pédagogiques et de recherche. 
-Pour une utilisation en production, assurez-vous de :
-- Changer tous les mots de passe par défaut
-- Utiliser HTTPS (TLS/SSL)
-- Configurer correctement les variables d'environnement
-- Effectuer des tests de sécurité
-- Consulter un expert en conformité RGPD
+## Démarrage rapide
+
+```bash
+cd Projet_EDN
+venv/bin/python3 run.py
+```
+
+Ouvrir **http://localhost:5000**
+
+| Compte | Identifiant | Mot de passe |
+|--------|-------------|--------------|
+| Admin  | `admin`     | `admin123`   |
+
+> Changer ces identifiants avant tout déploiement.
+
+---
+
+## Structure du projet
+
+```
+Projet_EDN/
+├── app/
+│   ├── __init__.py          # Factory Flask, extensions, création admin
+│   ├── models.py            # Modèles BDD (User, Request, AuditLog, ...)
+│   ├── routes/
+│   │   ├── auth.py          # Inscription, connexion, déconnexion
+│   │   ├── main.py          # Dashboard, nouvelle demande, mes données
+│   │   ├── admin.py         # Administration, validation, logs
+│   │   └── api.py           # API REST JSON
+│   ├── utils/
+│   │   ├── ai_engine.py     # Moteur IA (rule-based) + détecteur de stress
+│   │   ├── security.py      # Hash mots de passe, détection données sensibles
+│   │   └── validators.py    # Validation formulaires et contenu
+│   ├── static/
+│   │   ├── css/style.css
+│   │   └── js/main.js
+│   └── templates/           # Jinja2 — Tailwind CSS + Alpine.js
+│       ├── base.html
+│       ├── index.html
+│       ├── auth/
+│       ├── user/
+│       ├── admin/
+│       ├── legal/
+│       └── errors/
+├── config.py                # DevelopmentConfig / ProductionConfig
+├── requirements.txt
+├── run.py                   # Point d'entrée
+└── instance/
+    └── ia_system.db         # Base de données SQLite (auto-créée)
+```
+
+---
+
+## Installation (environnement existant)
+
+Le venv est déjà configuré. Si vous repartez de zéro :
+
+```bash
+cd Projet_EDN
+
+# Créer le venv
+python3 -m venv venv
+
+# Installer les dépendances
+venv/bin/pip install -r requirements.txt
+
+# Lancer
+venv/bin/python3 run.py
+```
+
+> **Note Linux :** Ne pas utiliser `pip install` global (bloqué par PEP 668).
+> Toujours passer par `venv/bin/pip` et `venv/bin/python3`.
+
+---
+
+## Fonctionnalités
+
+### Pour les utilisateurs
+| Fonctionnalité | Route | Description |
+|----------------|-------|-------------|
+| Nouvelle demande | `/new-request` | Question, résumé, génération, analyse de texte |
+| Voir une réponse | `/request/<id>` | Réponse IA + statut de validation + feedback |
+| Mes données | `/my-data` | Accès RGPD — export JSON, suppression compte |
+| Tableau de bord | `/dashboard` | Historique des demandes |
+
+### Pour les administrateurs (`/admin/`)
+| Fonctionnalité | Description |
+|----------------|-------------|
+| Dashboard | Statistiques globales, activité récente |
+| Gestion utilisateurs | Activer / désactiver des comptes |
+| Validation IA | Approuver ou rejeter les réponses générées |
+| Logs d'audit | Traçabilité complète de toutes les actions |
+| Cache | Statistiques et nettoyage du cache |
+
+### API REST (`/api/`)
+```
+GET  /api/health              État du système
+POST /api/ask                 Soumettre une demande IA (JSON)
+GET  /api/requests            Liste des demandes de l'utilisateur
+GET  /api/request/<id>        Détail d'une demande
+POST /api/request/<id>/feedback  Envoyer un feedback
+GET  /api/stats               Statistiques utilisateur
+GET  /api/model-info          Informations sur le modèle IA
+```
+
+---
+
+## Architecture technique
+
+### Stack
+- **Backend** : Python 3.11, Flask 3.0, SQLAlchemy 2.0, SQLite
+- **Frontend** : Tailwind CSS (CDN), Alpine.js (CDN), Jinja2
+- **Sécurité** : Flask-WTF (CSRF), Flask-Limiter (rate limiting), Flask-Login
+
+### Modèles de données
+| Modèle | Rôle |
+|--------|------|
+| `User` | Compte, rôle, consentement RGPD, verrouillage |
+| `Request` | Demandes IA, réponses, statut de validation |
+| `AuditLog` | Journal immuable de toutes les actions |
+| `CacheEntry` | Cache des réponses (expiration 30 jours) |
+| `ConsentLog` | Historique versionné des consentements |
+| `SystemConfig` | Configuration dynamique clé/valeur |
+
+### Moteur IA
+Le moteur actuel est **rule-based** (pas de LLM externe). Il gère 4 types de demandes :
+- `question` — classification de la question + réponse structurée
+- `resume` — statistiques du texte (mots, phrases, temps de lecture)
+- `generation` — squelette de contenu avec avertissements éthiques
+- `analysis` — métriques linguistiques (richesse lexicale, longueur moyenne)
+
+Pour intégrer un vrai LLM (OpenAI, Claude, Ollama...), remplacer `_generate_response()` dans `app/utils/ai_engine.py`.
+
+---
+
+## Conformité RGPD
+
+### Droits implémentés
+| Droit | Article | Implémentation |
+|-------|---------|----------------|
+| Information | Art. 13-14 | Politique de confidentialité + notice à l'inscription |
+| Accès | Art. 15 | `/my-data` — consultation et export JSON |
+| Rectification | Art. 16 | Changement de mot de passe |
+| Effacement | Art. 17 | `/delete-account` — suppression complète + anonymisation des logs |
+| Opposition | Art. 21 | Retrait de consentement possible |
+| Ne pas faire l'objet d'une décision automatisée | Art. 22 | Validation humaine obligatoire |
+
+### Base légale
+- Consentement explicite recueilli à l'inscription (Art. 6.1.a)
+- Versionnage des consentements enregistré dans `ConsentLog`
+
+### Mesures de sécurité
+- Mots de passe hachés SHA-256 + salt
+- Protection CSRF sur tous les formulaires POST
+- Rate limiting par route (ex : 5 inscriptions/heure, 20 demandes IA/heure)
+- Détection et blocage des données sensibles (email, téléphone, CIN, IBAN...)
+- Verrouillage de compte après 5 échecs de connexion
+- Journalisation de toutes les actions avec IP et User-Agent
+
+---
+
+## Gouvernance éthique
+
+- **Supervision humaine** : toute réponse IA est marquée "en attente" jusqu'à validation admin
+- **Transparence** : les utilisateurs sont informés de l'usage de l'IA à chaque étape
+- **Traçabilité** : audit log complet, non modifiable, avec niveaux de sévérité
+- **Détecteur de stress** : analyse les messages pour détecter les étudiants en difficulté
+- **Disclaimers** : chaque réponse IA inclut des avertissements sur ses limites
+
+---
+
+## Variables d'environnement (optionnel)
+
+Créer un fichier `.env` à la racine de `Projet_EDN/` :
+
+```env
+SECRET_KEY=changez-cette-cle-en-production
+DATABASE_URL=sqlite:///ia_system.db
+FLASK_ENV=development
+```
+
+---
+
+## Projet académique
+
+Ce système a été développé dans le cadre du module **Éthique et Droit du Numérique** à l'ENSA Béni Mellal. Il vise à démontrer concrètement :
+
+1. L'application des principes RGPD (licéité, minimisation, limitation, sécurité, responsabilisation)
+2. La mise en place d'une gouvernance IA éthique
+3. L'identification et la réduction des risques algorithmiques
+4. La supervision humaine des systèmes automatisés

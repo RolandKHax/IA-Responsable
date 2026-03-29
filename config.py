@@ -58,6 +58,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
     SQLALCHEMY_ECHO = True
+    SESSION_COOKIE_SECURE = False  # HTTP en développement
 
 
 class ProductionConfig(Config):

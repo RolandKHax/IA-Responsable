@@ -111,6 +111,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=user.id) }}" class="inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <button type="submit" class="text-indigo-600 hover:text-indigo-900 mr-3">
                                     {% if user.is_active %}Désactiver{% else %}Activer{% endif %}
                                 </button>
