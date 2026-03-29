@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des demandes{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Gestion des demandes IA</h1>
+            <p class="text-gray-600 mt-1">{{ requests|length }} demande(s) sur cette page</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+            ← Retour
+        </a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Type de demande</label>
+                <select name="type" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Tous les types</option>
+                    <option value="question" {% if request_type == 'question' %}selected{% endif %}>Question</option>
+                    <option value="resume" {% if request_type == 'resume' %}selected{% endif %}>Résumé</option>
+                    <option value="generation" {% if request_type == 'generation' %}selected{% endif %}>Génération</option>
+                    <option value="analysis" {% if request_type == 'analysis' %}selected{% endif %}>Analyse</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Statut validation</label>
+                <select name="validation" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Tous</option>
+                    <option value="pending" {% if validation_status == 'pending' %}selected{% endif %}>En attente</option>
+                    <option value="validated" {% if validation_status == 'validated' %}selected{% endif %}>Validées</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table des demandes -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contenu</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Validation</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for req in requests %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            #{{ req.id }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if req.request_type == 'question' %}
+                            <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">Question</span>
+                            {% elif req.request_type == 'resume' %}
+                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">Résumé</span>
+                            {% elif req.request_type == 'generation' %}
+                            <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded">Génération</span>
+                            {% else %}
+                            <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded">Analyse</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ req.user.username }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                            {{ req.content[:100] }}{% if req.content|length > 100 %}...{% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ req.created_at.strftime('%d/%m/%Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if req.validated_by_human %}
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Validée
+                            </span>
+                            {% else %}
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                En attente
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="{{ url_for('admin.validate_request', request_id=req.id) }}" 
+                               class="text-indigo-600 hover:text-indigo-900">
+                                {% if req.validated_by_human %}Voir{% else %}Valider{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Page <span class="font-medium">{{ pagination.page }}</span> sur <span class="font-medium">{{ pagination.pages }}</span>
+                </div>
+                <div class="flex space-x-2">
+                    {% if pagination.has_prev %}
+                    <a href="?page={{ pagination.prev_num }}&type={{ request_type }}&validation={{ validation_status }}" 
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">
+                        Précédent
+                    </a>
+                    {% endif %}
+                    {% if pagination.has_next %}
+                    <a href="?page={{ pagination.next_num }}&type={{ request_type }}&validation={{ validation_status }}" 
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">
+                        Suivant
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

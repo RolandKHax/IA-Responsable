@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Validation demande #{{ req.id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-gray-900">Validation de la demande #{{ req.id }}</h1>
+        <a href="{{ url_for('admin.requests') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+            ← Retour à la liste
+        </a>
+    </div>
+
+    <!-- Info demande -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div>
+                <p class="text-sm text-gray-500">Type</p>
+                <p class="text-lg font-semibold text-gray-900 capitalize">{{ req.request_type }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Utilisateur</p>
+                <p class="text-lg font-semibold text-gray-900">{{ req.user.username }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Date</p>
+                <p class="text-lg font-semibold text-gray-900">{{ req.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Temps traitement</p>
+                <p class="text-lg font-semibold text-gray-900">{{ req.processing_time_ms }}ms</p>
+            </div>
+        </div>
+
+        <!-- Contenu demande -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Demande de l'utilisateur</h3>
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p class="text-gray-800 whitespace-pre-wrap">{{ req.content }}</p>
+            </div>
+        </div>
+
+        <!-- Réponse IA -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Réponse générée par l'IA</h3>
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-l-4 border-blue-500">
+                <p class="text-gray-800 whitespace-pre-wrap font-mono text-sm">{{ req.response }}</p>
+            </div>
+        </div>
+
+        <!-- Statut actuel -->
+        {% if req.validated_by_human %}
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 text-green-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-semibold text-green-900">Déjà validée</p>
+                    <p class="text-sm text-green-700">
+                        Validée le {{ req.validation_date.strftime('%d/%m/%Y à %H:%M') if req.validation_date else 'N/A' }}
+                        {% if req.validation_comment %} - {{ req.validation_comment }}{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Formulaire de validation -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-bold text-gray-900 mb-4">
+            {% if req.validated_by_human %}Modifier la validation{% else %}Valider cette réponse{% endif %}
+        </h3>
+        
+        <form method="POST" action="{{ url_for('admin.validate_request', request_id=req.id) }}" class="space-y-6">
+            <!-- Décision -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">Décision de validation</label>
+                <div class="space-y-3">
+                    <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                        <input type="radio" name="status" value="approved" required class="mr-3">
+                        <div>
+                            <span class="font-medium text-green-700">✓ Approuver</span>
+                            <p class="text-sm text-gray-600">La réponse est correcte et peut être utilisée</p>
+                        </div>
+                    </label>
+                    
+                    <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                        <input type="radio" name="status" value="rejected" class="mr-3">
+                        <div>
+                            <span class="font-medium text-red-700">✗ Rejeter</span>
+                            <p class="text-sm text-gray-600">La réponse contient des erreurs importantes</p>
+                        </div>
+                    </label>
+                    
+                    <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                        <input type="radio" name="status" value="needs_review" class="mr-3">
+                        <div>
+                            <span class="font-medium text-yellow-700">⚠ Nécessite révision</span>
+                            <p class="text-sm text-gray-600">La réponse nécessite des vérifications supplémentaires</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Commentaire -->
+            <div>
+                <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">
+                    Commentaire de validation (optionnel)
+                </label>
+                <textarea id="comment" name="comment" rows="4" 
+                          class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Ajoutez vos remarques ou corrections suggérées...">{{ req.validation_comment if req.validation_comment else '' }}</textarea>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                <a href="{{ url_for('admin.requests') }}" 
+                   class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">
+                    Annuler
+                </a>
+                <button type="submit" 
+                        class="px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
+                    {% if req.validated_by_human %}Mettre à jour la validation{% else %}Soumettre la validation{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Feedback utilisateur (si existe) -->
+    {% if req.user_rating or req.user_feedback %}
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Feedback de l'utilisateur</h3>
+        <div class="space-y-3">
+            {% if req.user_rating %}
+            <div>
+                <p class="text-sm text-gray-600">Note : 
+                    <span class="font-semibold text-yellow-600">{{ req.user_rating }}/5</span>
+                    <span class="ml-2">
+                        {% for i in range(req.user_rating) %}⭐{% endfor %}
+                    </span>
+                </p>
+            </div>
+            {% endif %}
+            {% if req.user_feedback %}
+            <div>
+                <p class="text-sm text-gray-600 mb-1">Commentaire :</p>
+                <p class="text-gray-800 bg-gray-50 p-3 rounded">{{ req.user_feedback }}</p>
+            </div>
+            {% endif %}
+            {% if req.is_helpful is not none %}
+            <div>
+                <p class="text-sm text-gray-600">
+                    Utile : 
+                    {% if req.is_helpful %}
+                    <span class="text-green-600 font-semibold">👍 Oui</span>
+                    {% else %}
+                    <span class="text-red-600 font-semibold">👎 Non</span>
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

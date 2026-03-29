@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Administration{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header Admin -->
+    <div class="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Tableau de bord administrateur</h1>
+                <p class="text-purple-100">Gestion et supervision du système IA</p>
+            </div>
+            <svg class="w-16 h-16 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Utilisateurs</p>
+                    <p class="text-3xl font-bold text-gray-900">{{ total_users }}</p>
+                    <p class="text-xs text-green-600 mt-1">+{{ new_users_week }} cette semaine</p>
+                </div>
+                <svg class="w-12 h-12 text-blue-500 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Demandes</p>
+                    <p class="text-3xl font-bold text-gray-900">{{ total_requests }}</p>
+                    <p class="text-xs text-green-600 mt-1">+{{ new_requests_week }} cette semaine</p>
+                </div>
+                <svg class="w-12 h-12 text-green-500 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                    <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">À valider</p>
+                    <p class="text-3xl font-bold text-gray-900">{{ pending_validation }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Nécessite validation</p>
+                </div>
+                <svg class="w-12 h-12 text-yellow-500 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Cache</p>
+                    <p class="text-3xl font-bold text-gray-900">{{ cache_stats.total_entries }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ cache_stats.total_hits }} hits</p>
+                </div>
+                <svg class="w-12 h-12 text-purple-500 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Requests by Type -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Demandes par type</h3>
+            <div class="space-y-3">
+                {% for type, count in requests_by_type %}
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600 capitalize">{{ type }}</span>
+                        <span class="text-gray-900 font-medium">{{ count }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: {{ (count / total_requests * 100) if total_requests > 0 else 0 }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Active Users -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Utilisateurs actifs</h3>
+            <div class="flex items-center justify-center h-40">
+                <div class="text-center">
+                    <p class="text-6xl font-bold text-blue-600">{{ active_users }}</p>
+                    <p class="text-sm text-gray-600 mt-2">sur {{ total_users }} utilisateurs</p>
+                    <div class="mt-4">
+                        <span class="text-2xl font-bold text-green-600">
+                            {{ ((active_users / total_users * 100) if total_users > 0 else 0) | round(1) }}%
+                        </span>
+                        <span class="text-sm text-gray-600">d'activité</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Logs -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-900">Logs d'audit récents</h3>
+            <a href="{{ url_for('admin.logs') }}" class="text-sm text-blue-600 hover:text-blue-500">
+                Voir tout →
+            </a>
+        </div>
+        <div class="max-h-96 overflow-y-auto">
+            {% if logs %}
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utilisateur</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sévérité</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for log in logs %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ log.action }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">User #{{ log.user_id if log.user_id else 'System' }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ log.timestamp.strftime('%d/%m %H:%M') }}</td>
+                        <td class="px-6 py-4">
+                            {% if log.severity == 'critical' or log.severity == 'error' %}
+                            <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded">{{ log.severity }}</span>
+                            {% elif log.severity == 'warning' %}
+                            <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">{{ log.severity }}</span>
+                            {% else %}
+                            <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">{{ log.severity }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="p-6 text-center text-gray-500">Aucun log disponible</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{{ url_for('admin.users') }}" class="block bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition group">
+            <div class="flex items-center">
+                <div class="bg-blue-100 rounded-full p-3 group-hover:bg-blue-200 transition">
+                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm text-gray-600">Gérer</p>
+                    <p class="text-lg font-semibold text-gray-900">Utilisateurs</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.requests') }}" class="block bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition group">
+            <div class="flex items-center">
+                <div class="bg-green-100 rounded-full p-3 group-hover:bg-green-200 transition">
+                    <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm text-gray-600">Valider</p>
+                    <p class="text-lg font-semibold text-gray-900">Demandes</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.stats') }}" class="block bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition group">
+            <div class="flex items-center">
+                <div class="bg-purple-100 rounded-full p-3 group-hover:bg-purple-200 transition">
+                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm text-gray-600">Voir</p>
+                    <p class="text-lg font-semibold text-gray-900">Statistiques</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

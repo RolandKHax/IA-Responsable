@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Nouvelle demande{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 text-white">
+            <h1 class="text-3xl font-bold mb-2">Nouvelle demande IA</h1>
+            <p class="text-blue-100">Posez une question, demandez un résumé ou générez du contenu</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('main.new_request') }}" class="p-6 space-y-6">
+            <!-- Request Type -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">Type de demande</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="request_type" value="question" checked
+                               class="peer sr-only">
+                        <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 peer-checked:border-blue-600 peer-checked:bg-blue-50 transition">
+                            <div class="flex flex-col items-center text-center">
+                                <svg class="w-10 h-10 text-blue-600 mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="font-medium text-gray-900">Question</span>
+                                <span class="text-xs text-gray-500 mt-1">Posez une question</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="request_type" value="resume"
+                               class="peer sr-only">
+                        <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-green-300 peer-checked:border-green-600 peer-checked:bg-green-50 transition">
+                            <div class="flex flex-col items-center text-center">
+                                <svg class="w-10 h-10 text-green-600 mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                                    <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                                </svg>
+                                <span class="font-medium text-gray-900">Résumé</span>
+                                <span class="text-xs text-gray-500 mt-1">Résumer un texte</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="request_type" value="generation"
+                               class="peer sr-only">
+                        <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-300 peer-checked:border-purple-600 peer-checked:bg-purple-50 transition">
+                            <div class="flex flex-col items-center text-center">
+                                <svg class="w-10 h-10 text-purple-600 mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="font-medium text-gray-900">Génération</span>
+                                <span class="text-xs text-gray-500 mt-1">Créer du contenu</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="request_type" value="analysis"
+                               class="peer sr-only">
+                        <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-orange-300 peer-checked:border-orange-600 peer-checked:bg-orange-50 transition">
+                            <div class="flex flex-col items-center text-center">
+                                <svg class="w-10 h-10 text-orange-600 mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                                </svg>
+                                <span class="font-medium text-gray-900">Analyse</span>
+                                <span class="text-xs text-gray-500 mt-1">Analyser du texte</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                    Titre (optionnel)
+                </label>
+                <input type="text" id="title" name="title"
+                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Donnez un titre à votre demande">
+            </div>
+
+            <!-- Content -->
+            <div>
+                <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                    Contenu *
+                </label>
+                <textarea id="content" name="content" rows="12" required
+                          data-max-length="10000"
+                          class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Saisissez votre question, le texte à résumer, ou votre demande..."></textarea>
+                <div class="mt-2 flex justify-between text-sm">
+                    <p class="text-gray-500">
+                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        Minimum 10 caractères, maximum 10000
+                    </p>
+                    <span class="char-count text-gray-400">0 / 10000</span>
+                </div>
+            </div>
+
+            <!-- Important Notices -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <div class="flex">
+                    <svg class="h-5 w-5 text-yellow-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="text-sm text-yellow-700">
+                        <p class="font-medium mb-1">⚠️ Avertissements importants :</p>
+                        <ul class="list-disc list-inside space-y-1 text-xs">
+                            <li>Ne partagez jamais de données personnelles sensibles (mots de passe, numéros de carte bancaire, etc.)</li>
+                            <li>Les réponses IA peuvent contenir des erreurs et nécessitent une validation humaine</li>
+                            <li>Cette interaction sera enregistrée conformément au RGPD</li>
+                            <li>Pour des décisions importantes, consultez un expert humain</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                <div class="flex">
+                    <svg class="h-5 w-5 text-blue-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="text-sm text-blue-700">
+                        <p class="font-medium mb-1">✓ Votre vie privée est protégée :</p>
+                        <ul class="text-xs space-y-1">
+                            <li>• Détection automatique de données sensibles</li>
+                            <li>• Chiffrement AES-256 en base de données</li>
+                            <li>• Conformité totale au RGPD</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+                <a href="{{ url_for('main.dashboard') }}"
+                   class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+                    Annuler
+                </a>
+                <button type="submit"
+                        class="px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition transform hover:scale-105">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Soumettre la demande
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tips Card -->
+    <div class="mt-6 bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">💡 Conseils pour de meilleures réponses</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-medium text-gray-900">Soyez précis</p>
+                    <p class="text-xs">Formulez clairement votre question ou demande</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-medium text-gray-900">Donnez du contexte</p>
+                    <p class="text-xs">Plus de détails = réponse plus pertinente</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-medium text-gray-900">Vérifiez toujours</p>
+                    <p class="text-xs">L'IA peut faire des erreurs, vérifiez les infos importantes</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-medium text-gray-900">Donnez du feedback</p>
+                    <p class="text-xs">Aidez-nous à améliorer le système</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Character counter
+document.getElementById('content').addEventListener('input', function() {
+    const count = this.value.length;
+    const counter = document.querySelector('.char-count');
+    counter.textContent = count + ' / 10000';
+    
+    if (count > 9000) {
+        counter.classList.add('text-red-600', 'font-bold');
+    } else if (count > 7500) {
+        counter.classList.add('text-orange-600');
+    } else {
+        counter.classList.remove('text-red-600', 'text-orange-600', 'font-bold');
+    }
+});
+</script>
+{% endblock %}

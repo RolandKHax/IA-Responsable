@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl w-full">
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-8">
+                <svg class="mx-auto h-16 w-16 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                </svg>
+                <h2 class="mt-4 text-3xl font-extrabold text-gray-900">Créer un compte</h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Rejoignez la communauté ENSA et bénéficiez d'un assistant IA responsable
+                </p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Username -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nom d'utilisateur *
+                        </label>
+                        <input type="text" id="username" name="username" required
+                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="nom_utilisateur" minlength="3" maxlength="80">
+                        <p class="mt-1 text-xs text-gray-500">3-80 caractères, lettres et chiffres uniquement</p>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email *
+                        </label>
+                        <input type="email" id="email" name="email" required
+                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="votre.email@ensa.ma">
+                        <p class="mt-1 text-xs text-gray-500">Utilisez votre email académique</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Mot de passe *
+                        </label>
+                        <input type="password" id="password" name="password" required
+                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="••••••••" minlength="8">
+                        <p class="mt-1 text-xs text-gray-500">Min. 8 caractères, 1 majuscule, 1 chiffre</p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Confirmer le mot de passe *
+                        </label>
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="••••••••">
+                    </div>
+                </div>
+
+                <!-- RGPD Consent -->
+                <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Consentement RGPD</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input type="checkbox" id="consent" name="consent" required
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="consent" class="font-medium text-gray-700">
+                                    J'accepte les conditions d'utilisation et la politique de confidentialité *
+                                </label>
+                                <p class="text-gray-500 mt-1">
+                                    En créant un compte, vous acceptez que vos données soient traitées conformément au RGPD.
+                                    Vous pouvez exercer vos droits d'accès et d'effacement à tout moment.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-blue-900 mb-2">Vos droits RGPD :</h4>
+                            <ul class="text-xs text-blue-800 space-y-1">
+                                <li>✓ Droit d'accès à vos données personnelles</li>
+                                <li>✓ Droit de rectification de vos données</li>
+                                <li>✓ Droit à l'effacement (« droit à l'oubli »)</li>
+                                <li>✓ Droit à la portabilité de vos données</li>
+                                <li>✓ Droit d'opposition au traitement</li>
+                            </ul>
+                        </div>
+
+                        <div class="text-xs text-gray-600">
+                            <p>
+                                Consultez notre 
+                                <a href="{{ url_for('main.privacy_policy') }}" target="_blank" class="text-blue-600 hover:underline">politique de confidentialité</a>
+                                et nos 
+                                <a href="{{ url_for('main.terms') }}" target="_blank" class="text-blue-600 hover:underline">conditions d'utilisation</a>
+                                pour plus de détails.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition transform hover:scale-105">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                    Créer mon compte
+                </button>
+            </form>
+
+            <!-- Login Link -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Vous avez déjà un compte ?
+                    <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-600 hover:text-blue-500 transition">
+                        Se connecter
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

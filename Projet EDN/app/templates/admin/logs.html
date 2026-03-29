@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Logs d'audit{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Logs d'audit système</h1>
+            <p class="text-gray-600 mt-1">Traçabilité complète de toutes les actions</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+            ← Retour
+        </a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher action</label>
+                <input type="text" name="action" value="{{ action_filter }}" 
+                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Ex: CONNEXION, DEMANDE_IA...">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Sévérité</label>
+                <select name="severity" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Toutes</option>
+                    <option value="info" {% if severity_filter == 'info' %}selected{% endif %}>Info</option>
+                    <option value="warning" {% if severity_filter == 'warning' %}selected{% endif %}>Warning</option>
+                    <option value="error" {% if severity_filter == 'error' %}selected{% endif %}>Error</option>
+                    <option value="critical" {% if severity_filter == 'critical' %}selected{% endif %}>Critical</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Utilisateur ID</label>
+                <input type="number" name="user_id" value="{{ user_id }}" 
+                       class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Ex: 1">
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Timeline des logs -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="space-y-4 max-h-[600px] overflow-y-auto">
+            {% for log in logs %}
+            <div class="flex">
+                <!-- Timeline marker -->
+                <div class="flex flex-col items-center mr-4">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full
+                         {% if log.severity == 'critical' or log.severity == 'error' %}bg-red-100
+                         {% elif log.severity == 'warning' %}bg-yellow-100
+                         {% else %}bg-blue-100{% endif %}">
+                        {% if log.severity == 'critical' or log.severity == 'error' %}
+                        <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        {% elif log.severity == 'warning' %}
+                        <svg class="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        {% else %}
+                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        {% endif %}
+                    </div>
+                    {% if not loop.last %}
+                    <div class="w-0.5 h-full bg-gray-200 flex-1 mt-1"></div>
+                    {% endif %}
+                </div>
+
+                <!-- Log content -->
+                <div class="flex-1 pb-8">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="text-sm font-semibold text-gray-900">{{ log.action }}</h4>
+                            <span class="px-2 py-1 text-xs font-medium rounded
+                                 {% if log.severity == 'critical' %}bg-red-100 text-red-800
+                                 {% elif log.severity == 'error' %}bg-red-100 text-red-700
+                                 {% elif log.severity == 'warning' %}bg-yellow-100 text-yellow-800
+                                 {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ log.severity|upper }}
+                            </span>
+                        </div>
+                        
+                        {% if log.details %}
+                        <p class="text-sm text-gray-600 mb-2">{{ log.details }}</p>
+                        {% endif %}
+                        
+                        <div class="flex items-center gap-4 text-xs text-gray-500 mt-3">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
+                                User #{{ log.user_id if log.user_id else 'System' }}
+                            </span>
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ log.timestamp.strftime('%d/%m/%Y %H:%M:%S') }}
+                            </span>
+                            {% if log.ip_address %}
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ log.ip_address }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <div class="border-t border-gray-200 pt-4 mt-4">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Page <span class="font-medium">{{ pagination.page }}</span> sur <span class="font-medium">{{ pagination.pages }}</span>
+                </div>
+                <div class="flex space-x-2">
+                    {% if pagination.has_prev %}
+                    <a href="?page={{ pagination.prev_num }}&action={{ action_filter }}&severity={{ severity_filter }}&user_id={{ user_id }}" 
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">
+                        Précédent
+                    </a>
+                    {% endif %}
+                    {% if pagination.has_next %}
+                    <a href="?page={{ pagination.next_num }}&action={{ action_filter }}&severity={{ severity_filter }}&user_id={{ user_id }}" 
+                       class="px-3 py-1 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">
+                        Suivant
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+            <p class="text-sm text-gray-600">Total logs</p>
+            <p class="text-2xl font-bold text-gray-900">{{ pagination.total if pagination else logs|length }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+            <p class="text-sm text-gray-600">Erreurs critiques</p>
+            <p class="text-2xl font-bold text-gray-900">-</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+            <p class="text-sm text-gray-600">Avertissements</p>
+            <p class="text-2xl font-bold text-gray-900">-</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+            <p class="text-sm text-gray-600">Info</p>
+            <p class="text-2xl font-bold text-gray-900">-</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

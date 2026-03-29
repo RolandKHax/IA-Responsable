@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Demande #{{ req.id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="mb-6">
+        <a href="{{ url_for('main.dashboard') }}" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-500">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            Retour au tableau de bord
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span class="px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs font-medium uppercase">
+                            {{ req.request_type }}
+                        </span>
+                        {% if req.validated_by_human %}
+                        <span class="px-3 py-1 bg-green-500 rounded-full text-xs font-medium">
+                            ✓ Validée
+                        </span>
+                        {% else %}
+                        <span class="px-3 py-1 bg-yellow-500 rounded-full text-xs font-medium">
+                            En attente
+                        </span>
+                        {% endif %}
+                    </div>
+                    <h1 class="text-2xl font-bold">{{ req.title or 'Demande #' ~ req.id }}</h1>
+                    <p class="text-blue-100 text-sm mt-1">
+                        Créée le {{ req.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                    </p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold">#{{ req.id }}</div>
+                    {% if req.processing_time_ms %}
+                    <div class="text-xs text-blue-100 mt-1">{{ req.processing_time_ms }}ms</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 space-y-6">
+            <!-- User Request -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                    </svg>
+                    Votre demande
+                </h3>
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <p class="text-gray-800 whitespace-pre-wrap">{{ req.content }}</p>
+                </div>
+            </div>
+
+            <!-- AI Response -->
+            {% if req.response %}
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                        <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
+                    </svg>
+                    Réponse de l'IA
+                </h3>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-l-4 border-blue-500">
+                    <p class="text-gray-800 whitespace-pre-wrap font-mono text-sm">{{ req.response }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Validation Info -->
+            {% if req.validated_by_human and req.validation_comment %}
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h4 class="font-medium text-green-900 mb-2">Note du validateur :</h4>
+                <p class="text-sm text-green-800">{{ req.validation_comment }}</p>
+                <p class="text-xs text-green-600 mt-2">
+                    Validé le {{ req.validation_date.strftime('%d/%m/%Y à %H:%M') if req.validation_date else 'N/A' }}
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Feedback Form -->
+            {% if not req.user_rating %}
+            <div class="bg-white border-2 border-gray-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Votre avis nous intéresse</h3>
+                <form method="POST" action="{{ url_for('main.submit_feedback', request_id=req.id) }}" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cette réponse vous a-t-elle été utile ?</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="is_helpful" value="yes" class="mr-2">
+                                <span class="text-sm">👍 Oui</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="is_helpful" value="no" class="mr-2">
+                                <span class="text-sm">👎 Non</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Note (1-5)</label>
+                        <div class="flex space-x-2">
+                            {% for i in range(1, 6) %}
+                            <label class="cursor-pointer">
+                                <input type="radio" name="rating" value="{{ i }}" class="sr-only peer">
+                                <div class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-lg peer-checked:border-yellow-400 peer-checked:bg-yellow-50 hover:border-yellow-300 transition">
+                                    <span class="text-2xl">{% if i == 1 %}😞{% elif i == 2 %}😕{% elif i == 3 %}😐{% elif i == 4 %}😊{% else %}😄{% endif %}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="feedback" class="block text-sm font-medium text-gray-700 mb-2">Commentaire (optionnel)</label>
+                        <textarea id="feedback" name="feedback" rows="3"
+                                  class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Partagez vos suggestions..."></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
+                        Envoyer le feedback
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                    ✓ Merci pour votre feedback ! Note : {{ req.user_rating }}/5
+                    {% if req.is_helpful %}• Utile{% else %}• Pas utile{% endif %}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

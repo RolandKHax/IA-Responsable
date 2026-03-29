@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Mes données RGPD{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+    <!-- Header RGPD -->
+    <div class="bg-gradient-to-r from-green-600 to-emerald-700 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Vos données personnelles</h1>
+                <p class="text-green-100">Exercez vos droits RGPD en toute transparence</p>
+            </div>
+            <svg class="w-16 h-16 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Vos droits RGPD -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Vos droits (RGPD Art. 15-21)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="border-2 border-green-200 rounded-lg p-4 bg-green-50">
+                <div class="flex items-center mb-2">
+                    <svg class="w-6 h-6 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                    </svg>
+                    <h3 class="font-semibold text-green-900">Droit d'accès</h3>
+                </div>
+                <p class="text-sm text-green-800">Consultez toutes vos données ci-dessous</p>
+            </div>
+
+            <div class="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                <div class="flex items-center mb-2">
+                    <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                    </svg>
+                    <h3 class="font-semibold text-blue-900">Droit de rectification</h3>
+                </div>
+                <p class="text-sm text-blue-800">Modifiez vos informations inexactes</p>
+            </div>
+
+            <div class="border-2 border-red-200 rounded-lg p-4 bg-red-50">
+                <div class="flex items-center mb-2">
+                    <svg class="w-6 h-6 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <h3 class="font-semibold text-red-900">Droit à l'effacement</h3>
+                </div>
+                <p class="text-sm text-red-800">Supprimez votre compte et vos données</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations personnelles -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-900">Informations personnelles</h2>
+        </div>
+        <div class="p-6">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Nom d'utilisateur</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ user.username }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Email</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ user.email }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Rôle</dt>
+                    <dd class="mt-1"><span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">{{ user.role }}</span></dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Compte créé le</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ user.created_at.strftime('%d/%m/%Y à %H:%M') }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Consentement RGPD</dt>
+                    <dd class="mt-1 text-sm text-gray-900">
+                        {% if user.consent_given %}
+                        <span class="text-green-600">✓ Accordé le {{ user.consent_date.strftime('%d/%m/%Y') if user.consent_date else 'N/A' }}</span>
+                        {% else %}
+                        <span class="text-red-600">✗ Non accordé</span>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Dernière connexion</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ user.last_login.strftime('%d/%m/%Y à %H:%M') if user.last_login else 'Jamais' }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Vos demandes -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-900">Vos demandes ({{ requests|length }})</h2>
+            <button onclick="exportToJSON()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+                Exporter (JSON)
+            </button>
+        </div>
+        <div class="max-h-96 overflow-y-auto">
+            {% if requests %}
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for req in requests %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 text-sm text-gray-900">#{{ req.id }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ req.request_type }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ req.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td class="px-6 py-4">
+                            {% if req.validated_by_human %}
+                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">Validée</span>
+                            {% else %}
+                            <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">En attente</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="p-6 text-center text-gray-500">Aucune demande enregistrée</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Logs d'audit -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-900">Historique des actions (50 dernières)</h2>
+        </div>
+        <div class="max-h-96 overflow-y-auto">
+            {% if logs %}
+            <div class="divide-y divide-gray-200">
+                {% for log in logs %}
+                <div class="p-4 hover:bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{ log.action }}</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ log.timestamp.strftime('%d/%m/%Y à %H:%M:%S') }}</p>
+                        </div>
+                        <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">{{ log.severity }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="p-6 text-center text-gray-500">Aucun historique disponible</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="bg-white rounded-lg shadow-md border-2 border-red-200 overflow-hidden">
+        <div class="bg-red-50 px-6 py-4 border-b border-red-200">
+            <h2 class="text-xl font-bold text-red-900">⚠️ Zone dangereuse</h2>
+        </div>
+        <div class="p-6">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                <p class="text-sm text-red-800">
+                    <strong>Attention :</strong> La suppression de votre compte est <strong>irréversible</strong>. 
+                    Toutes vos données seront définitivement supprimées conformément au RGPD (Art. 17 - Droit à l'effacement).
+                </p>
+            </div>
+
+            <form method="POST" action="{{ url_for('main.delete_account') }}" onsubmit="return confirm('Êtes-vous absolument sûr ? Cette action est IRRÉVERSIBLE.')">
+                <div class="mb-4">
+                    <label for="confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tapez <strong class="text-red-600">supprimer</strong> pour confirmer :
+                    </label>
+                    <input type="text" id="confirmation" name="confirmation" required
+                           class="block w-full rounded-lg border-red-300 shadow-sm focus:ring-red-500 focus:border-red-500"
+                           placeholder="supprimer">
+                </div>
+                <button type="submit"
+                        class="px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                    Supprimer définitivement mon compte
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportToJSON() {
+    const data = {{ requests | tojson }};
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mes-donnees-{{ user.username }}-{{ user.created_at.strftime("%Y%m%d") }}.json';
+    a.click();
+}
+</script>
+{% endblock %}
