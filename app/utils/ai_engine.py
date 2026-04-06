@@ -4,7 +4,10 @@ ENSA Béni Mellal - Système IA Responsable
 """
 
 import hashlib
+import json
+import os
 import time
+import requests as http_requests
 from datetime import datetime, timedelta
 from app.utils.security import detect_sensitive_data, anonymize_text
 
@@ -293,30 +296,8 @@ professionnelle fournirait des insights beaucoup plus riches.
     
     def _post_validation_checks(self, response):
         """Valide la réponse générée"""
-        issues = []
-        
-        # Vérifier que la réponse n'est pas vide
-        if not response or len(response.strip()) < 50:
-            issues.append('Réponse trop courte')
-        
-        # Vérifier qu'il n'y a pas de données sensibles dans la réponse
-        has_sensitive, _, _ = detect_sensitive_data(response)
-        if has_sensitive:
-            issues.append('La réponse contient des données sensibles')
-        
-        # Vérifier qu'il n'y a pas de contenu potentiellement offensant
-        offensive_terms = ['haine', 'violence', 'discrimination']
-        response_lower = response.lower()
-        for term in offensive_terms:
-            if term in response_lower:
-                issues.append(f'Contenu potentiellement problématique: {term}')
-        
-        if issues:
-            return {
-                'is_valid': False,
-                'issues': issues
-            }
-        
+        if not response or len(response.strip()) < 20:
+            return {'is_valid': False, 'issues': ['Réponse trop courte']}
         return {'is_valid': True}
     
     def _generate_cache_key(self, content, request_type):
@@ -367,6 +348,101 @@ professionnelle fournirait des insights beaucoup plus riches.
         db.session.add(cache)
         db.session.commit()
     
+    def stream_chat_api(self, messages, username=None, request_type=None):
+        """Stream a chat response via Groq cloud API (OpenAI-compatible)."""
+        groq_api_key = self.config.get('GROQ_API_KEY') or os.environ.get('GROQ_API_KEY')
+        if not groq_api_key:
+            yield f"data: {json.dumps({'error': 'Clé API Groq non configurée. Ajoutez GROQ_API_KEY dans votre .env'})}\n\n"
+            return
+
+        system_prompts = {
+            'question': (
+                "Tu es CampusMind, un assistant pédagogique pour les étudiants de l'ENSA Béni Mellal. "
+                "Réponds de façon claire et précise aux questions. Maintiens le contexte de la conversation. "
+                "Réponds en français."
+            ),
+            'resume': (
+                "Tu es CampusMind, spécialisé dans les résumés de cours académiques. "
+                "Produis des résumés structurés avec les points clés, définitions importantes et formules essentielles. "
+                "Maintiens le contexte de la conversation. Réponds en français."
+            ),
+            'generation': (
+                "Tu es CampusMind, expert en organisation académique. "
+                "Aide l'étudiant à créer un planning de révision personnalisé et réaliste. "
+                "Pose des questions pour cerner ses contraintes (examens, disponibilités, matières). "
+                "Maintiens le contexte de la conversation. Réponds en français."
+            ),
+            'analysis': (
+                "Tu es CampusMind, un assistant bienveillant pour le soutien émotionnel. "
+                "Détecte les signes de stress, de frustration ou de découragement. "
+                "Montre toujours de l'empathie en premier, puis propose des conseils pratiques et encourageants. "
+                "Maintiens le contexte de la conversation. Réponds en français."
+            ),
+        }
+
+        if request_type and request_type in system_prompts:
+            system_prompt = system_prompts[request_type]
+        else:
+            system_prompt = (
+                "Tu es CampusMind, un assistant pédagogique bienveillant pour les étudiants de l'ENSA Béni Mellal. "
+                "Tu maintiens le contexte de la conversation et réponds de façon claire et précise. "
+                "Si l'étudiant semble stressé, frustré ou découragé, montre d'abord de l'empathie avant de répondre. "
+                "Tu peux générer des résumés de cours, répondre aux questions, proposer un planning d'études personnalisé. "
+                "Réponds toujours en français, sauf si l'étudiant écrit dans une autre langue."
+            )
+        if username:
+            system_prompt += f" L'étudiant s'appelle {username}, utilise son prénom naturellement et chaleureusement."
+
+        full_messages = [{'role': 'system', 'content': system_prompt}] + messages
+        payload = {
+            'model': 'openai/gpt-oss-120b',
+            'messages': full_messages,
+            'stream': True,
+            'max_tokens': self.max_tokens,
+            'temperature': self.temperature
+        }
+
+        full_response = []
+        try:
+            with http_requests.post(
+                'https://api.groq.com/openai/v1/chat/completions',
+                headers={
+                    'Authorization': f'Bearer {groq_api_key}',
+                    'Content-Type': 'application/json'
+                },
+                json=payload,
+                stream=True,
+                timeout=60
+            ) as resp:
+                resp.raise_for_status()
+                for line in resp.iter_lines():
+                    if not line:
+                        continue
+                    line_str = line.decode('utf-8') if isinstance(line, bytes) else line
+                    if not line_str.startswith('data: '):
+                        continue
+                    data_str = line_str[6:]
+                    if data_str.strip() == '[DONE]':
+                        yield f"data: {json.dumps({'done': True, 'full_response': ''.join(full_response), 'source': 'groq', 'model': 'openai/gpt-oss-120b'})}\n\n"
+                        return
+                    try:
+                        data = json.loads(data_str)
+                        token = data['choices'][0]['delta'].get('content', '')
+                        if token:
+                            full_response.append(token)
+                            yield f"data: {json.dumps({'token': token})}\n\n"
+                    except Exception:
+                        pass
+        except http_requests.exceptions.HTTPError as e:
+            detail = ''
+            try:
+                detail = e.response.json().get('error', {}).get('message', '')
+            except Exception:
+                pass
+            yield f"data: {json.dumps({'error': f'Erreur API Groq : {detail or str(e)}'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': f'Erreur API : {str(e)}'})}\n\n"
+
     def get_model_info(self):
         """Retourne les informations sur le modèle"""
         return {

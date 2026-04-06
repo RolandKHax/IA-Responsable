@@ -16,7 +16,7 @@
                 </p>
             </div>
 
-            <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-6">
+            <form id="registerForm" method="POST" action="{{ url_for('auth.register') }}" class="space-y-6">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Username -->
@@ -48,9 +48,20 @@
                         <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
                             Mot de passe *
                         </label>
-                        <input type="password" id="password" name="password" required
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="••••••••" minlength="8">
+                        <div class="relative">
+                            <input type="password" id="password" name="password" required
+                                   class="pr-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="••••••••" minlength="8">
+                            <button type="button" onclick="togglePassword('password', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                                <svg class="h-5 w-5 eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <svg class="h-5 w-5 eye-closed hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                </svg>
+                            </button>
+                        </div>
                         <p class="mt-1 text-xs text-gray-500">Min. 8 caractères, 1 majuscule, 1 chiffre</p>
                     </div>
 
@@ -59,16 +70,27 @@
                         <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-2">
                             Confirmer le mot de passe *
                         </label>
-                        <input type="password" id="confirm_password" name="confirm_password" required
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="••••••••">
+                        <div class="relative">
+                            <input type="password" id="confirm_password" name="confirm_password" required
+                                   class="pr-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="••••••••">
+                            <button type="button" onclick="togglePassword('confirm_password', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                                <svg class="h-5 w-5 eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <svg class="h-5 w-5 eye-closed hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- RGPD Consent -->
                 <div class="bg-gray-50 rounded-lg p-6 border-2 border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Consentement RGPD</h3>
-                    
+
                     <div class="space-y-4">
                         <div class="flex items-start">
                             <div class="flex items-center h-5">
@@ -99,9 +121,9 @@
 
                         <div class="text-xs text-gray-600">
                             <p>
-                                Consultez notre 
+                                Consultez notre
                                 <a href="{{ url_for('main.privacy_policy') }}" target="_blank" class="text-blue-600 hover:underline">politique de confidentialité</a>
-                                et nos 
+                                et nos
                                 <a href="{{ url_for('main.terms') }}" target="_blank" class="text-blue-600 hover:underline">conditions d'utilisation</a>
                                 pour plus de détails.
                             </p>
@@ -131,4 +153,263 @@
         </div>
     </div>
 </div>
+
+<!-- Quiz Modal (hidden by default) -->
+<div id="quizOverlay" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <h3 class="text-lg font-semibold text-gray-900">Vérification RGPD</h3>
+            </div>
+            <button onclick="closeQuiz()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="px-6 py-5">
+            <p class="text-sm text-gray-600 mb-5">
+                Veuillez répondre à ces 3 questions sur notre
+                <a href="{{ url_for('main.privacy_policy') }}" target="_blank" class="text-blue-600 underline">politique de confidentialité</a>
+                pour confirmer votre inscription.
+            </p>
+
+            <!-- Error message (shown after wrong answers) -->
+            <div id="quizError" class="hidden mb-4 p-3 bg-red-50 border border-red-300 rounded-lg text-sm text-red-700">
+                Au moins une réponse est incorrecte. Veuillez relire la
+                <a href="{{ url_for('main.privacy_policy') }}" target="_blank" class="text-blue-600 underline">politique de confidentialité</a>
+                et réessayer.
+            </div>
+
+            <div id="quizQuestions" class="space-y-5">
+                <!-- Questions injected by JS -->
+            </div>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+            <button onclick="closeQuiz()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                Annuler
+            </button>
+            <button onclick="validateQuiz()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+                Valider
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    const eyeOpen = btn.querySelector('.eye-open');
+    const eyeClosed = btn.querySelector('.eye-closed');
+    if (input.type === 'password') {
+        input.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+    } else {
+        input.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+    }
+}
+
+const QUESTION_POOL = [
+    {
+        q: "Qui est le responsable de traitement des données sur cette plateforme ?",
+        choices: [
+            "Google Maroc",
+            "L'École Nationale des Sciences Appliquées de Béni Mellal (ENSA-BM)",
+            "Le Ministère de l'Éducation Nationale"
+        ],
+        correct: 1
+    },
+    {
+        q: "Combien de temps l'historique des requêtes est-il conservé ?",
+        choices: [
+            "3 mois",
+            "6 mois",
+            "12 mois"
+        ],
+        correct: 1
+    },
+    {
+        q: "Combien de temps les logs de sécurité sont-ils conservés ?",
+        choices: [
+            "6 mois",
+            "12 mois",
+            "3 ans"
+        ],
+        correct: 1
+    },
+    {
+        q: "Qui contacter pour exercer vos droits sur vos données personnelles ?",
+        choices: [
+            "Le support technique Google",
+            "Le DPO à dpo@ensa-bm.ac.ma",
+            "Aucun contact n'est prévu"
+        ],
+        correct: 1
+    },
+    {
+        q: "Quelles données sensibles sont strictement interdites dans le système ?",
+        choices: [
+            "Nom et prénom",
+            "Numéro CIN, données de santé, informations bancaires",
+            "Adresse email académique"
+        ],
+        correct: 1
+    },
+    {
+        q: "Comment les données sont-elles stockées ?",
+        choices: [
+            "Sur des serveurs cloud aux États-Unis",
+            "En stockage local sécurisé (SQLite avec accès restreint)",
+            "Sur Google Drive"
+        ],
+        correct: 1
+    },
+    {
+        q: "Quel est le délai de réponse garanti pour une demande d'exercice de droits ?",
+        choices: [
+            "7 jours maximum",
+            "30 jours maximum",
+            "90 jours maximum"
+        ],
+        correct: 1
+    },
+    {
+        q: "Que se passe-t-il pour les décisions importantes générées par l'IA ?",
+        choices: [
+            "Elles sont appliquées automatiquement",
+            "Toute décision importante est soumise à validation humaine",
+            "L'utilisateur n'a aucun recours"
+        ],
+        correct: 1
+    },
+    {
+        q: "Auprès de qui pouvez-vous saisir un recours en cas de non-respect de vos droits ?",
+        choices: [
+            "La police nationale",
+            "La CNDP (Commission Nationale de contrôle de la protection des Données)",
+            "Aucun recours n'est possible"
+        ],
+        correct: 1
+    },
+    {
+        q: "Les données sont-elles partagées avec des tiers commerciaux ?",
+        choices: [
+            "Oui, avec des partenaires publicitaires",
+            "Non, aucun partage avec des tiers commerciaux",
+            "Oui, avec d'autres universités"
+        ],
+        correct: 1
+    },
+    {
+        q: "Quelle est la base légale pour le traitement des textes saisis par l'utilisateur ?",
+        choices: [
+            "Obligation légale",
+            "Intérêt légitime",
+            "Consentement explicite"
+        ],
+        correct: 2
+    },
+    {
+        q: "Après combien de temps d'inactivité les données sont-elles supprimées ?",
+        choices: [
+            "3 mois",
+            "6 mois",
+            "1 an"
+        ],
+        correct: 1
+    }
+];
+
+let currentQuestions = [];
+let quizPassed = false;
+
+function pickThreeQuestions() {
+    const shuffled = [...QUESTION_POOL].sort(() => Math.random() - 0.5);
+    currentQuestions = shuffled.slice(0, 3);
+}
+
+function renderQuiz() {
+    const container = document.getElementById('quizQuestions');
+    container.innerHTML = '';
+    document.getElementById('quizError').classList.add('hidden');
+
+    currentQuestions.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <p class="text-sm font-medium text-gray-900 mb-2">${i + 1}. ${item.q}</p>
+            <div class="space-y-1.5 ml-1">
+                ${item.choices.map((c, j) => `
+                    <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+                        <input type="radio" name="quiz_${i}" value="${j}"
+                               class="text-blue-600 focus:ring-blue-500">
+                        <span>${c}</span>
+                    </label>
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function openQuiz() {
+    pickThreeQuestions();
+    renderQuiz();
+    document.getElementById('quizOverlay').classList.remove('hidden');
+}
+
+function closeQuiz() {
+    document.getElementById('quizOverlay').classList.add('hidden');
+}
+
+function validateQuiz() {
+    let allCorrect = true;
+
+    for (let i = 0; i < 3; i++) {
+        const selected = document.querySelector(`input[name="quiz_${i}"]:checked`);
+        if (!selected || parseInt(selected.value) !== currentQuestions[i].correct) {
+            allCorrect = false;
+            break;
+        }
+    }
+
+    if (allCorrect) {
+        quizPassed = true;
+        closeQuiz();
+        document.getElementById('registerForm').submit();
+    } else {
+        document.getElementById('quizError').classList.remove('hidden');
+        // Pick new questions for next attempt
+        pickThreeQuestions();
+        renderQuiz();
+        document.getElementById('quizError').classList.remove('hidden');
+    }
+}
+
+// Intercept form submission
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    if (quizPassed) return; // already passed, let it submit
+    e.preventDefault();
+
+    // Check native form validity first (required fields, etc.)
+    if (!this.checkValidity()) {
+        this.reportValidity();
+        return;
+    }
+
+    openQuiz();
+});
+</script>
 {% endblock %}

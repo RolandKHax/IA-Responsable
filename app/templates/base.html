@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}IA Responsable{% endblock %} - ENSA Béni Mellal</title>
+    <title>{% block title %}CampusMind{% endblock %} - ENSA Béni Mellal</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,11 +44,8 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="{{ url_for('main.index') }}" class="flex items-center space-x-2 text-white hover:text-blue-100 transition">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
-                            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
-                        </svg>
-                        <span class="text-xl font-bold">IA Responsable</span>
+                        <img src="{{ url_for('static', filename='ailogo.png') }}" alt="CampusMind" class="w-16 h-16 object-contain drop-shadow-lg">
+                        <span class="text-xl font-bold">CampusMind</span>
                     </a>
                 </div>
 
@@ -61,11 +58,11 @@
                             </svg>
                             Tableau de bord
                         </a>
-                        <a href="{{ url_for('main.new_request') }}" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition">
+                        <a href="{{ url_for('main.chat') }}" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition">
                             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                             </svg>
-                            Nouvelle demande
+                            Chat
                         </a>
                         <a href="{{ url_for('main.my_data') }}" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium transition">
                             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,7 +118,7 @@
         <div x-show="mobileMenuOpen" class="md:hidden bg-blue-700 px-2 pt-2 pb-3 space-y-1">
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('main.dashboard') }}" class="block text-white hover:bg-blue-800 px-3 py-2 rounded-md">Tableau de bord</a>
-                <a href="{{ url_for('main.new_request') }}" class="block text-white hover:bg-blue-800 px-3 py-2 rounded-md">Nouvelle demande</a>
+                <a href="{{ url_for('main.chat') }}" class="block text-white hover:bg-blue-800 px-3 py-2 rounded-md">Chat</a>
                 <a href="{{ url_for('main.my_data') }}" class="block text-white hover:bg-blue-800 px-3 py-2 rounded-md">Mes données</a>
                 {% if current_user.is_admin() %}
                 <a href="{{ url_for('admin.dashboard') }}" class="block text-white hover:bg-blue-800 px-3 py-2 rounded-md">Administration</a>
@@ -187,7 +184,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">IA Responsable</h3>
+                    <h3 class="text-lg font-semibold mb-4">CampusMind</h3>
                     <p class="text-gray-400 text-sm">Système conforme RGPD et éthique IA</p>
                     <p class="text-gray-400 text-sm mt-2">© 2024-2025 ENSA Béni Mellal</p>
                 </div>
@@ -225,6 +222,10 @@
             </div>
         </div>
     </footer>
+
+    <!-- Markdown & sanitizer for chat -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
 
     <!-- Alpine.js for interactivity -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

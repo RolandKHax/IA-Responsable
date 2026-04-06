@@ -5,164 +5,215 @@
 {% block content %}
 <div class="max-w-4xl mx-auto">
     <div class="bg-white rounded-lg shadow-xl p-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-6">Politique de confidentialité</h1>
-        <p class="text-sm text-gray-600 mb-8">Dernière mise à jour : {{ now.strftime('%d/%m/%Y') }}</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Politique de Confidentialité</h1>
+        <p class="text-sm text-gray-500 mb-8">Système IA Interne — ENSA Béni Mellal &middot; Version 1.0 — Avril 2026</p>
 
-        <div class="prose prose-blue max-w-none space-y-6">
-            <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
-                <p class="text-gray-700">
-                    La présente politique de confidentialité décrit comment le système IA Responsable de l'ENSA Béni Mellal 
-                    collecte, utilise, stocke et protège vos données personnelles conformément au Règlement Général sur la 
-                    Protection des Données (RGPD) et à la loi marocaine 09-08.
-                </p>
-            </section>
+        <div class="prose prose-blue max-w-none space-y-8">
 
+            <!-- Section 1 -->
             <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">2. Responsable du traitement</h2>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-gray-700"><strong>Organisation :</strong> ENSA Béni Mellal</p>
-                    <p class="text-gray-700"><strong>Adresse :</strong> Université Sultan Moulay Slimane, Béni Mellal, Maroc</p>
-                    <p class="text-gray-700"><strong>Contact DPO :</strong> dpo@ensa.ma</p>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">1. Identité du Responsable de Traitement</h2>
+                <div class="bg-gray-50 rounded-lg p-4 space-y-1">
+                    <p class="text-gray-700"><strong>Responsable :</strong> École Nationale des Sciences Appliquées de Béni Mellal (ENSA-BM)</p>
+                    <p class="text-gray-700"><strong>Université :</strong> Sultan Moulay Slimane</p>
+                    <p class="text-gray-700"><strong>Contact DPO :</strong> <a href="mailto:dpo@ensa-bm.ac.ma" class="text-blue-600 hover:underline">dpo@ensa-bm.ac.ma</a></p>
+                    <p class="text-gray-700"><strong>Adresse :</strong> Béni Mellal, Maroc</p>
                 </div>
             </section>
 
+            <!-- Section 2 -->
             <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Données collectées</h2>
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">3.1 Données d'identification</h3>
-                <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                    <li>Nom d'utilisateur</li>
-                    <li>Adresse email</li>
-                    <li>Mot de passe (hashé avec SHA-256 + salt)</li>
-                    <li>Date de création du compte</li>
-                </ul>
-
-                <h3 class="text-xl font-semibold text-gray-800 mb-3 mt-4">3.2 Données d'utilisation</h3>
-                <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                    <li>Demandes soumises à l'IA</li>
-                    <li>Réponses générées</li>
-                    <li>Historique des interactions</li>
-                    <li>Feedbacks et notes</li>
-                </ul>
-
-                <h3 class="text-xl font-semibold text-gray-800 mb-3 mt-4">3.3 Données techniques</h3>
-                <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
-                    <li>Adresse IP</li>
-                    <li>User-Agent (navigateur)</li>
-                    <li>Horodatages des actions</li>
-                    <li>Logs de sécurité</li>
-                </ul>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Base légale et finalités</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">2. Données Collectées et Finalités</h2>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Traitement</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Base légale</th>
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-4 py-3 font-semibold text-gray-700 border border-gray-200">Donnée collectée</th>
+                                <th class="px-4 py-3 font-semibold text-gray-700 border border-gray-200">Finalité</th>
+                                <th class="px-4 py-3 font-semibold text-gray-700 border border-gray-200">Base légale</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100">
                             <tr>
-                                <td class="px-4 py-3 text-sm text-gray-700">Création de compte</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">Consentement (Art. 6.1.a RGPD)</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Identifiant utilisateur (étudiant/personnel)</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Authentification & traçabilité</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Intérêt légitime</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Textes saisis (questions, résumés)</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Traitement par le système IA</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Consentement explicite</td>
                             </tr>
                             <tr>
-                                <td class="px-4 py-3 text-sm text-gray-700">Traitement des demandes IA</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">Exécution du contrat (Art. 6.1.b RGPD)</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Historique des requêtes</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Journalisation & conformité</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Obligation légale</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Logs d'actions</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Sécurité & audit</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Intérêt légitime</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p class="text-sm text-yellow-800">
+                        <strong>Le système interdit strictement</strong> la saisie de données personnelles sensibles
+                        (numéro CIN, données de santé, informations bancaires, etc.)
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Principes RGPD Appliqués</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-1">Licéité</h4>
+                        <p class="text-sm text-blue-800">Chaque traitement repose sur une base légale identifiée</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-1">Minimisation</h4>
+                        <p class="text-sm text-blue-800">Seules les données strictement nécessaires sont collectées</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-1">Limitation des finalités</h4>
+                        <p class="text-sm text-blue-800">Les données ne sont pas utilisées à d'autres fins</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-1">Limitation de conservation</h4>
+                        <p class="text-sm text-blue-800">Les données sont supprimées après <strong>6 mois</strong> d'inactivité</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-1">Sécurité</h4>
+                        <p class="text-sm text-blue-800">Authentification, chiffrement, journalisation</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-blue-900 mb-1">Accountability</h4>
+                        <p class="text-sm text-blue-800">Traçabilité complète des actions</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Droits des Utilisateurs</h2>
+                <p class="text-gray-700 mb-4">
+                    Tout utilisateur dispose des droits suivants, exerçables via
+                    <a href="mailto:dpo@ensa-bm.ac.ma" class="text-blue-600 hover:underline font-medium">dpo@ensa-bm.ac.ma</a> :
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-1">Droit d'accès</h4>
+                        <p class="text-sm text-green-800">Consulter ses données traitées</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-1">Droit de rectification</h4>
+                        <p class="text-sm text-green-800">Corriger des données inexactes</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-1">Droit à l'effacement</h4>
+                        <p class="text-sm text-green-800">Demander la suppression de son historique</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-1">Droit d'opposition</h4>
+                        <p class="text-sm text-green-800">Refuser certains traitements</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-1">Droit à l'information</h4>
+                        <p class="text-sm text-green-800">Être informé de l'usage de l'IA</p>
+                    </div>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-900 mb-1">Droit contre la décision automatisée</h4>
+                        <p class="text-sm text-green-800">Toute décision importante est soumise à validation humaine</p>
+                    </div>
+                </div>
+                <div class="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <p class="text-sm text-gray-700 font-medium">Délai de réponse garanti : <strong>30 jours maximum</strong></p>
+                </div>
+            </section>
+
+            <!-- Section 5 -->
+            <section>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Durée de Conservation</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-4 py-3 font-semibold text-gray-700 border border-gray-200">Type de données</th>
+                                <th class="px-4 py-3 font-semibold text-gray-700 border border-gray-200">Durée</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Historique des requêtes</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200 font-medium">6 mois</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Logs de sécurité</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200 font-medium">12 mois</td>
                             </tr>
                             <tr>
-                                <td class="px-4 py-3 text-sm text-gray-700">Amélioration du service</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">Intérêt légitime (Art. 6.1.f RGPD)</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 text-sm text-gray-700">Logs de sécurité</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">Obligation légale (Art. 6.1.c RGPD)</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200">Données de compte</td>
+                                <td class="px-4 py-3 text-gray-700 border border-gray-200 font-medium">Durée de la scolarité/emploi + 1 an</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
+            <!-- Section 6 -->
             <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Vos droits RGPD</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-900 mb-2">✓ Droit d'accès (Art. 15)</h4>
-                        <p class="text-sm text-blue-800">Consultez toutes vos données via la page "Mes données"</p>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Sécurité des Données</h2>
+                <p class="text-gray-700 mb-4">Le système met en oeuvre les mesures suivantes :</p>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
+                        <span class="text-lg">🔐</span>
+                        <p class="text-sm text-gray-700">Authentification sécurisée (identifiant + mot de passe hashé)</p>
                     </div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-900 mb-2">✓ Droit de rectification (Art. 16)</h4>
-                        <p class="text-sm text-blue-800">Modifiez vos informations personnelles</p>
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
+                        <span class="text-lg">📋</span>
+                        <p class="text-sm text-gray-700">Journalisation de toutes les actions (logs horodatés)</p>
                     </div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-900 mb-2">✓ Droit à l'effacement (Art. 17)</h4>
-                        <p class="text-sm text-blue-800">Supprimez votre compte et toutes vos données</p>
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
+                        <span class="text-lg">🗄️</span>
+                        <p class="text-sm text-gray-700">Stockage local sécurisé (SQLite avec accès restreint)</p>
                     </div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-900 mb-2">✓ Droit à la portabilité (Art. 20)</h4>
-                        <p class="text-sm text-blue-800">Exportez vos données au format JSON</p>
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
+                        <span class="text-lg">🚫</span>
+                        <p class="text-sm text-gray-700">Aucun partage avec des tiers commerciaux</p>
+                    </div>
+                    <div class="flex items-start gap-3 bg-gray-50 rounded-lg p-3">
+                        <span class="text-lg">🔒</span>
+                        <p class="text-sm text-gray-700">Accès limité au personnel autorisé uniquement</p>
                     </div>
                 </div>
             </section>
 
+            <!-- Section 7 -->
             <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Sécurité des données</h2>
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <h4 class="font-semibold text-green-900 mb-3">Mesures de sécurité techniques :</h4>
-                    <ul class="list-disc list-inside text-sm text-green-800 space-y-2">
-                        <li>Chiffrement AES-256 en base de données</li>
-                        <li>TLS/HTTPS pour toutes les communications</li>
-                        <li>Hachage sécurisé des mots de passe (SHA-256 + salt)</li>
-                        <li>Protection CSRF et rate limiting</li>
-                        <li>Détection automatique de données sensibles</li>
-                        <li>Logs d'audit immuables</li>
-                    </ul>
-                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">7. Recours et Contact</h2>
+                <p class="text-gray-700 mb-4">En cas de non-respect de vos droits, vous pouvez :</p>
+                <ol class="list-decimal list-inside text-gray-700 space-y-2 ml-4">
+                    <li>Contacter le <strong>DPO</strong> : <a href="mailto:dpo@ensa-bm.ac.ma" class="text-blue-600 hover:underline">dpo@ensa-bm.ac.ma</a></li>
+                    <li>Saisir la <strong>CNDP</strong> (Commission Nationale de contrôle de la protection des Données à caractère Personnel — Maroc)</li>
+                </ol>
             </section>
 
+            <!-- Section 8 -->
             <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">7. Conservation des données</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">8. Mise à Jour de la Politique</h2>
                 <p class="text-gray-700">
-                    Vos données sont conservées pendant la durée de votre compte actif, plus une période de 12 mois 
-                    pour des raisons de sécurité et de conformité légale. Les logs d'audit anonymisés sont conservés 
-                    3 ans conformément aux obligations légales.
-                </p>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">8. Transferts de données</h2>
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <p class="text-sm text-yellow-800">
-                        <strong>⚠️ Important :</strong> Toutes vos données sont stockées au Maroc. 
-                        Nous n'effectuons aucun transfert de données personnelles vers des pays tiers sans votre consentement explicite.
-                    </p>
-                </div>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">9. Contact</h2>
-                <p class="text-gray-700">
-                    Pour toute question concernant vos données personnelles ou pour exercer vos droits, contactez notre 
-                    Délégué à la Protection des Données (DPO) à : 
-                    <a href="mailto:dpo@ensa.ma" class="text-blue-600 hover:underline">dpo@ensa.ma</a>
-                </p>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">10. Modifications</h2>
-                <p class="text-gray-700">
-                    Nous nous réservons le droit de modifier cette politique de confidentialité. Toute modification sera 
-                    notifiée par email et nécessitera votre consentement renouvelé.
+                    Cette politique peut être mise à jour. Les utilisateurs seront informés de tout changement
+                    significatif via notification lors de la connexion.
                 </p>
             </section>
         </div>
 
         <div class="mt-8 pt-6 border-t border-gray-200">
             <a href="{{ url_for('main.index') }}" class="text-blue-600 hover:text-blue-500">
-                ← Retour à l'accueil
+                &larr; Retour à l'accueil
             </a>
         </div>
     </div>

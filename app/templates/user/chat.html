@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+{% block title %}Chat{% endblock %}
+{% block main_class %}{% endblock %}
+
+{% block content %}
+<div class="flex bg-gray-50" style="height: calc(100vh - 80px)">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div id="sidebar" class="w-64 flex-shrink-0 bg-gray-900 text-white flex flex-col transition-all duration-200 z-10">
+
+        <!-- New Chat -->
+        <div class="p-3 border-b border-gray-700">
+            <button onclick="newChat()"
+                    class="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-gray-600 hover:bg-gray-700 text-sm text-gray-200 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Nouvelle conversation
+            </button>
+        </div>
+
+        <!-- Conversation list -->
+        <div class="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
+            <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide px-2 py-1">Historique</p>
+            <div id="convList">
+                <p class="text-xs text-gray-600 px-2 py-2">Chargement...</p>
+            </div>
+        </div>
+
+        <!-- User info -->
+        <div class="p-3 border-t border-gray-700 flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">
+                {{ current_user.username[0].upper() }}
+            </div>
+            <span class="text-sm text-gray-300 truncate">{{ current_user.username }}</span>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CHAT AREA ===== -->
+    <div class="flex flex-col flex-1 min-w-0">
+
+        <!-- Header -->
+        <div class="bg-white border-b shadow-sm px-4 py-3 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <!-- Mobile sidebar toggle -->
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                        <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 id="chatTitle" class="text-base font-bold text-gray-900">CampusMind</h1>
+                    <p class="text-xs text-green-500 font-medium flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>
+                        API Cloud actif
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="messages" class="flex-1 overflow-y-auto px-4 py-6 space-y-5">
+            <!-- Welcome bubble injected by JS -->
+        </div>
+
+        <!-- Input -->
+        <div class="bg-white border-t px-4 py-4 flex-shrink-0">
+            <div class="max-w-3xl mx-auto">
+                <div id="typeBadge" class="hidden mb-2">
+                    <span id="typeBadgeLabel" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"></span>
+                    <button onclick="clearType()" class="ml-1 text-gray-400 hover:text-gray-600 text-xs">&#10005;</button>
+                </div>
+                <div class="flex gap-2 items-end">
+                    <!-- + type selector -->
+                    <div class="relative flex-shrink-0">
+                        <button id="typePlusBtn" onclick="toggleTypeMenu()"
+                                class="w-9 h-9 rounded-xl border border-gray-300 hover:border-blue-500 hover:text-blue-600 flex items-center justify-center text-gray-400 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </button>
+                        <div id="typeMenu" class="hidden absolute bottom-12 left-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-2 w-64 z-20">
+                            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide px-3 py-1.5">Type de demande</p>
+                            <button onclick="selectType('resume','Résumé de cours','bg-green-100 text-green-700','&#128196;')"
+                                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-green-50 text-left transition">
+                                <span class="text-lg">&#128196;</span>
+                                <div><p class="text-sm font-medium text-gray-800">Résumé de cours</p><p class="text-xs text-gray-400">Synthèse structurée</p></div>
+                            </button>
+                            <button onclick="selectType('generation','Planning personnalisé','bg-purple-100 text-purple-700','&#128197;')"
+                                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-purple-50 text-left transition">
+                                <span class="text-lg">&#128197;</span>
+                                <div><p class="text-sm font-medium text-gray-800">Planning personnalisé</p><p class="text-xs text-gray-400">Organiser mes révisions</p></div>
+                            </button>
+                            <button onclick="selectType('analysis','Soutien émotionnel','bg-orange-100 text-orange-600','&#128153;')"
+                                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-orange-50 text-left transition">
+                                <span class="text-lg">&#128153;</span>
+                                <div><p class="text-sm font-medium text-gray-800">Soutien émotionnel</p><p class="text-xs text-gray-400">Je suis stressé ou bloqué</p></div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex-1">
+                        <textarea id="chatInput" rows="1"
+                                  placeholder="Posez votre question... (Entrée pour envoyer)"
+                                  class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                  style="max-height: 180px; overflow-y: auto;"></textarea>
+                    </div>
+
+                    <button id="sendBtn" onclick="sendMessage()"
+                            class="flex-shrink-0 w-9 h-9 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white flex items-center justify-center transition">
+                        <svg id="sendIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                        <svg id="loadingIcon" class="w-4 h-4 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-2 text-center">API Cloud Groq &middot; GPT-OSS-120B</p>
+            </div>
+        </div>
+
+    </div><!-- end main -->
+</div><!-- end flex -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const csrfToken = '{{ csrf_token() }}';
+const username = '{{ current_user.username }}';
+
+let conversationHistory = [];
+let currentConversationId = null;
+let isStreaming = false;
+let selectedType = null;
+
+const chatInput   = document.getElementById('chatInput');
+const messagesEl  = document.getElementById('messages');
+const sendBtn     = document.getElementById('sendBtn');
+const sendIcon    = document.getElementById('sendIcon');
+const loadingIcon = document.getElementById('loadingIcon');
+const convList    = document.getElementById('convList');
+const chatTitle   = document.getElementById('chatTitle');
+
+// ---- Sidebar ----
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('hidden');
+}
+
+async function loadConversations() {
+    try {
+        const r = await fetch('/conversations');
+        const data = await r.json();
+        renderSidebarList(data.conversations);
+    } catch(e) {}
+}
+
+function renderSidebarList(convs) {
+    if (!convs.length) {
+        convList.innerHTML = '<p class="text-xs text-gray-600 px-2 py-2">Aucune conversation</p>';
+        return;
+    }
+    convList.innerHTML = '';
+    convs.forEach(c => {
+        const div = document.createElement('div');
+        div.id = `conv-${c.id}`;
+        div.className = `group flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-gray-700 transition ${c.id === currentConversationId ? 'bg-gray-700' : ''}`;
+        div.innerHTML = `
+            <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm text-gray-200 truncate">${escapeHtml(c.title)}</p>
+                <p class="text-xs text-gray-500">${c.updated_at}</p>
+            </div>
+            <button onclick="deleteConversation(${c.id}, event)"
+                    class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 transition flex-shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </button>`;
+        div.addEventListener('click', () => loadConversation(c.id));
+        convList.appendChild(div);
+    });
+}
+
+function setActiveSidebar(id) {
+    document.querySelectorAll('#convList > div').forEach(d => d.classList.remove('bg-gray-700'));
+    const el = document.getElementById(`conv-${id}`);
+    if (el) el.classList.add('bg-gray-700');
+}
+
+async function loadConversation(id) {
+    try {
+        const r = await fetch(`/conversations/${id}`);
+        const data = await r.json();
+        currentConversationId = data.id;
+        conversationHistory = data.messages;
+        chatTitle.textContent = data.title;
+        setActiveSidebar(id);
+        renderHistoryMessages(data.messages);
+    } catch(e) {}
+}
+
+function renderHistoryMessages(msgs) {
+    messagesEl.innerHTML = '';
+    msgs.forEach(m => {
+        if (m.role === 'user') {
+            addUserBubble(m.content);
+        } else if (m.role === 'assistant') {
+            const bubble = addAIBubble();
+            bubble.innerHTML = DOMPurify.sanitize(marked.parse(m.content));
+        }
+    });
+}
+
+async function deleteConversation(id, e) {
+    e.stopPropagation();
+    await fetch(`/conversations/${id}/delete`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({csrf_token: csrfToken})
+    });
+    if (id === currentConversationId) newChat();
+    await loadConversations();
+}
+
+async function saveConversation(title) {
+    const r = await fetch('/conversations/save', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({
+            id: currentConversationId,
+            title: title || 'Nouvelle conversation',
+            messages: conversationHistory
+        })
+    });
+    const data = await r.json();
+    currentConversationId = data.id;
+    chatTitle.textContent = data.title;
+    await loadConversations();
+    setActiveSidebar(data.id);
+}
+
+function newChat() {
+    currentConversationId = null;
+    conversationHistory = [];
+    chatTitle.textContent = 'CampusMind';
+    messagesEl.innerHTML = '';
+    showWelcome();
+    setActiveSidebar(null);
+    chatInput.focus();
+}
+
+// ---- Welcome bubble ----
+function showWelcome() {
+    messagesEl.innerHTML = `
+        <div class="max-w-2xl mx-auto space-y-4">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl px-5 py-4">
+                <p class="text-sm font-semibold text-yellow-800 mb-2">&#9888; Avertissements importants :</p>
+                <ul class="text-sm text-yellow-700 space-y-1">
+                    <li>&#8226; Ne partagez jamais de données personnelles sensibles</li>
+                    <li>&#8226; Les réponses IA peuvent contenir des erreurs</li>
+                    <li>&#8226; Cette interaction est enregistrée conformément au RGPD</li>
+                </ul>
+            </div>
+        </div>`;
+}
+
+// ---- Type selector ----
+function toggleTypeMenu() { document.getElementById('typeMenu').classList.toggle('hidden'); }
+function selectType(type, label, badgeClass, icon) {
+    selectedType = type;
+    const badge = document.getElementById('typeBadge');
+    const badgeLabel = document.getElementById('typeBadgeLabel');
+    badgeLabel.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${badgeClass}`;
+    badgeLabel.textContent = `${icon} ${label}`;
+    badge.classList.remove('hidden');
+    document.getElementById('typeMenu').classList.add('hidden');
+    chatInput.focus();
+}
+function clearType() { selectedType = null; document.getElementById('typeBadge').classList.add('hidden'); }
+document.addEventListener('click', e => {
+    const menu = document.getElementById('typeMenu');
+    const btn = document.getElementById('typePlusBtn');
+    if (!menu.contains(e.target) && !btn.contains(e.target)) menu.classList.add('hidden');
+});
+
+// ---- Chat ----
+function escapeHtml(t) {
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+function addUserBubble(text) {
+    const div = document.createElement('div');
+    div.className = 'flex gap-3 max-w-3xl mx-auto justify-end';
+    div.innerHTML = `
+        <div class="bg-blue-600 text-white rounded-2xl rounded-tr-none px-4 py-3 shadow-sm max-w-2xl">
+            <p class="text-sm whitespace-pre-wrap">${escapeHtml(text)}</p>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center text-xs font-bold text-gray-600">
+            ${escapeHtml(username.charAt(0).toUpperCase())}
+        </div>`;
+    messagesEl.appendChild(div);
+    scrollToBottom();
+}
+
+function addAIBubble() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex gap-3 max-w-3xl mx-auto';
+    const avatar = document.createElement('div');
+    avatar.className = 'w-8 h-8 rounded-full bg-blue-600 flex-shrink-0 flex items-center justify-center';
+    avatar.innerHTML = `<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/></svg>`;
+    const bubble = document.createElement('div');
+    bubble.className = 'bg-white rounded-2xl rounded-tl-none px-4 py-3 shadow-sm max-w-2xl border border-gray-100 prose text-sm min-w-[60px]';
+    bubble.innerHTML = '<span class="animate-pulse text-blue-400">&#9612;</span>';
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+    return bubble;
+}
+
+// Textarea auto-resize
+chatInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 180) + 'px';
+});
+chatInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!isStreaming) sendMessage(); }
+});
+
+async function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text || isStreaming) return;
+
+    isStreaming = true;
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    sendIcon.classList.add('hidden');
+    loadingIcon.classList.remove('hidden');
+
+    addUserBubble(text);
+    conversationHistory.push({ role: 'user', content: text });
+
+    const bubble = addAIBubble();
+    let fullResponse = '';
+
+    const params = { messages: JSON.stringify(conversationHistory), csrf_token: csrfToken };
+    if (selectedType) params.request_type = selectedType;
+
+    try {
+        const resp = await fetch('{{ url_for("main.stream_chat") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(params)
+        });
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                let data;
+                try { data = JSON.parse(line.slice(6)); } catch { continue; }
+
+                if (data.error) {
+                    bubble.innerHTML = `<span class="text-red-500">${escapeHtml(data.error)}</span>`;
+                    conversationHistory.pop();
+                    break;
+                }
+                if (data.token) {
+                    fullResponse += data.token;
+                    bubble.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse)) + '<span class="animate-pulse text-blue-400">&#9612;</span>';
+                    scrollToBottom();
+                }
+                if (data.done) {
+                    bubble.innerHTML = DOMPurify.sanitize(marked.parse(fullResponse));
+                    conversationHistory.push({ role: 'assistant', content: fullResponse });
+                    // Auto-save
+                    const title = conversationHistory.length >= 2
+                        ? conversationHistory[0].content.slice(0, 50)
+                        : 'Nouvelle conversation';
+                    await saveConversation(title);
+                }
+            }
+        }
+    } catch(err) {
+        bubble.innerHTML = `<span class="text-red-500">Erreur : ${escapeHtml(err.message)}</span>`;
+        conversationHistory.pop();
+    }
+
+    isStreaming = false;
+    sendBtn.disabled = false;
+    sendIcon.classList.remove('hidden');
+    loadingIcon.classList.add('hidden');
+    chatInput.focus();
+}
+
+// Init
+showWelcome();
+loadConversations();
+chatInput.focus();
+</script>
+{% endblock %}

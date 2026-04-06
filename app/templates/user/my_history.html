@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Mon historique{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="mb-6">
+        <a href="{{ url_for('main.dashboard') }}" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-500">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            Retour au tableau de bord
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 text-white">
+            <h1 class="text-3xl font-bold mb-2">Mon historique</h1>
+            <p class="text-blue-100">Gérez vos demandes IA et votre historique</p>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+            {% if requests %}
+            <div class="space-y-4">
+                <!-- Actions -->
+                <div class="flex justify-end mb-6">
+                    <form method="POST" action="{{ url_for('main.delete_all_history') }}" class="inline" onsubmit="return confirm('Êtes-vous sûr ? Cette action ne peut pas être annulée.');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition">
+                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            Supprimer tout
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Historique -->
+                {% for req in requests %}
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium uppercase">
+                                    {{ req.request_type }}
+                                </span>
+                                <span class="text-xs text-gray-500">
+                                    {{ req.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">{{ req.title or 'Demande #' ~ req.id }}</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ req.content[:150] }}...</p>
+                        </div>
+                        <div class="flex space-x-2 ml-4">
+                            <a href="{{ url_for('main.view_request', request_id=req.id) }}" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition">
+                                Voir
+                            </a>
+                            <form method="POST" action="{{ url_for('main.delete_request', request_id=req.id) }}" class="inline" onsubmit="return confirm('Supprimer cette demande ?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Stats -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600">{{ requests | length }}</div>
+                        <p class="text-sm text-gray-600">Demandes totales</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600">{{ requests | selectattr('validated_by_human') | list | length }}</div>
+                        <p class="text-sm text-gray-600">Validées</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-orange-600">{{ requests | rejectattr('response') | list | length }}</div>
+                        <p class="text-sm text-gray-600">En attente</p>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000-2H6a4 4 0 014 4v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-gray-500 text-lg">Aucune demande dans l'historique</p>
+                <a href="{{ url_for('main.new_request') }}" class="mt-4 inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition">
+                    Créer une demande
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

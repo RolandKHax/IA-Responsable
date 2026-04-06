@@ -3,10 +3,11 @@ Routes principales de l'application
 ENSA Béni Mellal - Système IA Responsable
 """
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+import json
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, Response, stream_with_context, jsonify
 from flask_login import login_required, current_user
 from app import db, limiter
-from app.models import Request, AuditLog, User
+from app.models import Request, AuditLog, User, Conversation
 from app.utils.ai_engine import AIEngine, StressAnalyzer
 from app.utils.security import get_client_ip
 from app.utils.validators import validate_ai_request, validate_rating, validate_feedback_text
@@ -273,6 +274,89 @@ def delete_account():
     
     flash('Votre compte et toutes vos données personnelles ont été supprimés conformément au RGPD.', 'success')
     return redirect(url_for('main.index'))
+
+
+@main_bp.route('/chat')
+@login_required
+def chat():
+    """Interface de chat conversationnel"""
+    return render_template('user/chat.html')
+
+
+@main_bp.route('/chat/stream', methods=['POST'])
+@login_required
+def stream_chat():
+    """Stream a multi-turn chat response via SSE."""
+    messages_json = request.form.get('messages', '[]')
+    request_type = request.form.get('request_type', None)
+    try:
+        messages = json.loads(messages_json)
+        if not isinstance(messages, list):
+            messages = []
+    except Exception:
+        messages = []
+
+    username = current_user.username
+
+    def generate():
+        yield from ai_engine.stream_chat_api(messages, username=username, request_type=request_type)
+
+    return Response(
+        stream_with_context(generate()),
+        mimetype='text/event-stream',
+        headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'}
+    )
+
+
+@main_bp.route('/conversations')
+@login_required
+def list_conversations():
+    convs = Conversation.query.filter_by(user_id=current_user.id)\
+        .order_by(Conversation.updated_at.desc()).limit(50).all()
+    return jsonify({'conversations': [
+        {'id': c.id, 'title': c.title,
+         'updated_at': c.updated_at.strftime('%d/%m/%Y') if c.updated_at else ''}
+        for c in convs
+    ]})
+
+
+@main_bp.route('/conversations/save', methods=['POST'])
+@login_required
+def save_conversation():
+    data = request.get_json()
+    conv_id = data.get('id')
+    messages = data.get('messages', [])
+    title = data.get('title', 'Nouvelle conversation')
+
+    if conv_id:
+        conv = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first()
+        if not conv:
+            return jsonify({'error': 'Not found'}), 404
+    else:
+        conv = Conversation(user_id=current_user.id)
+        db.session.add(conv)
+
+    conv.title = title[:100]
+    conv.messages = messages
+    conv.updated_at = datetime.utcnow()
+    db.session.commit()
+    return jsonify({'id': conv.id, 'title': conv.title})
+
+
+@main_bp.route('/conversations/<int:conv_id>', methods=['GET'])
+@login_required
+def get_conversation(conv_id):
+    conv = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first_or_404()
+    return jsonify({'id': conv.id, 'title': conv.title, 'messages': conv.messages})
+
+
+@main_bp.route('/conversations/<int:conv_id>/delete', methods=['POST'])
+@login_required
+def delete_conversation(conv_id):
+    conv = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first_or_404()
+    db.session.delete(conv)
+    db.session.commit()
+    return jsonify({'ok': True})
 
 
 @main_bp.route('/privacy-policy')

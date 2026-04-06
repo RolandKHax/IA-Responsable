@@ -237,6 +237,42 @@ class CacheEntry(db.Model):
         return False
 
 
+class Conversation(db.Model):
+    """Historique des conversations chat"""
+
+    __tablename__ = 'conversations'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    title = db.Column(db.String(200), default='Nouvelle conversation')
+    messages_encrypted = db.Column(db.Text, default=None)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('conversations', lazy='dynamic', cascade='all, delete-orphan'))
+
+    @property
+    def messages(self):
+        import json
+        from app.utils.encryption import decrypt_data
+        raw = decrypt_data(self.messages_encrypted)
+        if not raw:
+            return []
+        try:
+            return json.loads(raw)
+        except Exception:
+            return []
+
+    @messages.setter
+    def messages(self, value):
+        import json
+        from app.utils.encryption import encrypt_data
+        self.messages_encrypted = encrypt_data(json.dumps(value, ensure_ascii=False))
+
+    def __repr__(self):
+        return f'<Conversation {self.id} - {self.title}>'
+
+
 class ConsentLog(db.Model):
     """Historique des consentements RGPD"""
     
